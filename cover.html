@@ -962,6 +962,67 @@ body.cover-leaving .mobile-container::after{
 }
 </style>
 
+
+<style id="boarding-pass-v10">
+/* =========================================================
+   V10 — Boarding Pass label rõ hơn trên dải xanh
+   ========================================================= */
+.boarding-side-label{
+    position:absolute !important;
+    top:0 !important;
+    right:0 !important;
+    width:38px !important;
+    height:100% !important;
+    background:#718d95 !important;
+    color:#fff !important;
+    z-index:12 !important;
+    overflow:hidden !important;
+    pointer-events:none !important;
+}
+
+/* Dòng BOARDING PASS ở phần dải xanh phía trên Passport */
+.boarding-pass-text{
+    position:absolute !important;
+    top:7px !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+
+    writing-mode:vertical-rl !important;
+    text-orientation:mixed !important;
+
+    font-family:Georgia, "Times New Roman", serif !important;
+    font-size:13px !important;
+    font-weight:400 !important;
+    line-height:1 !important;
+    letter-spacing:.5px !important;
+    white-space:nowrap !important;
+    color:#fff !important;
+}
+
+/* VIP ở phần dải xanh dưới barcode */
+.boarding-vip-text{
+    position:absolute !important;
+    bottom:14px !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+
+    writing-mode:vertical-rl !important;
+    text-orientation:mixed !important;
+
+    font-family:Georgia, "Times New Roman", serif !important;
+    font-size:13px !important;
+    font-weight:400 !important;
+    letter-spacing:.8px !important;
+    white-space:nowrap !important;
+    color:#fff !important;
+}
+
+/* Passport vẫn phủ giữa dải Boarding Pass giống mẫu */
+.passport-cover{
+    z-index:15 !important;
+}
+</style>
+
 </head>
 <body>
 <!-- COVER_BUILD:20260810-1554-v9 -->
@@ -1011,7 +1072,10 @@ body.cover-leaving .mobile-container::after{
         </div>
 
         <!-- Khung vé máy bay (Boarding Pass) -->
-        <div class="boarding-pass-card fade-in" style="animation-delay: 0.5s;"><div class="boarding-side-label">BOARDING PASS&nbsp;&nbsp;&nbsp;VIP</div>
+        <div class="boarding-pass-card fade-in" style="animation-delay: 0.5s;"><div class="boarding-side-label" aria-hidden="true">
+            <span class="boarding-pass-text">BOARDING PASS</span>
+            <span class="boarding-vip-text">VIP</span>
+        </div>
             <div class="invite-text">Trân trọng kính mời</div>
             <div id="coverGuest" class="guest-name">Quý khách</div>
             <img id="coverPlane" class="plane-icon" src="https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/mv-20260723092425-by2vu.png" alt="Plane"><div class="ticket-barcode" aria-hidden="true"></div>
