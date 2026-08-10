@@ -302,6 +302,273 @@
     }
 </style>
 
+
+<style id="cover-header-transition-v2">
+/* Fonts also used by the main LadiPage, loaded here because cover.html is isolated in an iframe. */
+@font-face{
+    font-family:"WeddingSerif";
+    src:url("https://w.ladicdn.com/691804d3a89f3900120ca482/arnopro-lightdisplay-20260602100300-eemuc.otf");
+    font-display:swap;
+}
+@font-face{
+    font-family:"WeddingScript";
+    src:url("https://w.ladicdn.com/691804d3a89f3900120ca482/9slide05-quickpen-20260623105043-havos.ttf") format("truetype");
+    font-display:swap;
+}
+
+/* The Gemini source used h3 defaults + line-height:1.6, which made the second name
+   fall under the boarding pass. Keep the same visual position but make the group compact. */
+.couple-names{
+    top:34px !important;
+    left:38px !important;
+    width:344px !important;
+    height:116px !important;
+    overflow:visible !important;
+}
+.couple-names h3{
+    margin:0 !important;
+    padding:0 !important;
+    font-family:"WeddingSerif", Georgia, "Times New Roman", serif !important;
+    font-size:39px !important;
+    font-weight:400 !important;
+    line-height:1.02 !important;
+    letter-spacing:.15px !important;
+    white-space:nowrap !important;
+}
+.couple-names .ampersand{
+    display:block !important;
+    width:132px !important;
+    height:auto !important;
+    margin:-2px auto -3px !important;
+}
+
+/* Guest name gets the intended handwritten look instead of browser italic fallback. */
+.boarding-pass-card .guest-name{
+    font-family:"WeddingScript","Brush Script MT",cursive !important;
+    font-style:normal !important;
+    font-size:31px !important;
+    line-height:1.05 !important;
+}
+
+/* ---- opening transition ---- */
+.mobile-container,
+.couple-names,
+.boarding-pass-card,
+.passport-cover,
+.open-card-btn{
+    will-change:transform,opacity,filter;
+}
+
+body.cover-leaving .couple-names{
+    transform:translateY(-26px) scale(.98);
+    opacity:0;
+    transition:transform .48s ease,opacity .42s ease;
+}
+body.cover-leaving .boarding-pass-card{
+    transform:translateY(22px) scale(.985);
+    opacity:0;
+    filter:blur(1.5px);
+    transition:transform .52s cubic-bezier(.2,.75,.25,1),opacity .42s ease,filter .42s ease;
+}
+body.cover-leaving .passport-cover{
+    transform:translateY(-22px) scale(1.09) !important;
+    opacity:0;
+    filter:blur(1px);
+    transition:transform .56s cubic-bezier(.16,.82,.22,1),opacity .46s ease,filter .46s ease;
+}
+body.cover-leaving .open-card-btn{
+    transform:translateX(-50%) translateY(24px) scale(.95) !important;
+    opacity:0;
+    transition:transform .38s ease,opacity .3s ease;
+    animation:none !important;
+}
+body.cover-leaving .mobile-container{
+    background-position:center -14px !important;
+    transition:background-position .58s ease;
+}
+
+/* Soft flash/crossfade layer before the main invitation appears. */
+.mobile-container::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:999;
+    pointer-events:none;
+    background:rgba(245,250,250,.94);
+    opacity:0;
+    transition:opacity .55s ease .08s;
+}
+body.cover-leaving .mobile-container::after{
+    opacity:1;
+}
+
+@media(max-width:419px){
+    /* The previous uniform scale is kept; only typography is fixed. */
+    .couple-names{
+        left:38px !important;
+        width:344px !important;
+    }
+}
+@media(prefers-reduced-motion:reduce){
+    body.cover-leaving .couple-names,
+    body.cover-leaving .boarding-pass-card,
+    body.cover-leaving .passport-cover,
+    body.cover-leaving .open-card-btn{
+        transition:none !important;
+    }
+    .mobile-container::after{transition:none !important}
+}
+</style>
+
+
+<style id="cover-balance-v3">
+/* =========================================================
+   V3 — Cân lại chữ AND + giữ tên khách trên một dòng
+   ========================================================= */
+
+/* Cụm tên cô dâu / chú rể */
+.couple-names{
+    top:32px !important;
+    left:38px !important;
+    width:344px !important;
+    height:122px !important;
+    overflow:visible !important;
+}
+
+.couple-names h3{
+    margin:0 !important;
+    padding:0 !important;
+    font-family:"WeddingSerif", Georgia, "Times New Roman", serif !important;
+    font-size:38px !important;
+    font-weight:400 !important;
+    line-height:1.02 !important;
+    letter-spacing:.1px !important;
+    white-space:nowrap !important;
+}
+
+/* Ảnh chữ "and": nhỏ hơn, nằm đúng giữa hai tên */
+.couple-names .ampersand{
+    display:block !important;
+    width:112px !important;
+    height:auto !important;
+    margin:-1px auto -1px !important;
+    transform:translateY(0) !important;
+    object-fit:contain !important;
+}
+
+/* Boarding pass */
+.boarding-pass-card{
+    top:166px !important;
+}
+
+/* "TRÂN TRỌNG KÍNH MỜI" gọn hơn một chút */
+.boarding-pass-card .invite-text{
+    font-size:13px !important;
+    line-height:1.25 !important;
+    white-space:nowrap !important;
+}
+
+/* Tên khách: luôn cố gắng nằm trên 1 dòng.
+   JS bên dưới sẽ tự giảm thêm font nếu tên quá dài. */
+.boarding-pass-card .guest-name{
+    width:166px !important;
+    max-width:166px !important;
+    min-height:44px !important;
+    margin:14px auto 0 !important;
+    padding:0 2px !important;
+    font-family:"WeddingScript","Brush Script MT",cursive !important;
+    font-style:normal !important;
+    font-size:25px !important;
+    font-weight:400 !important;
+    line-height:1 !important;
+    letter-spacing:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+}
+
+/* Nếu trình duyệt chưa tải kịp font script, vẫn không cho xuống dòng. */
+#coverGuest{
+    white-space:nowrap !important;
+}
+
+/* Mobile rất hẹp vẫn giữ nguyên bố cục 420px và scale toàn bộ. */
+@media(max-width:419px){
+    .couple-names .ampersand{
+        width:112px !important;
+    }
+    .boarding-pass-card .guest-name{
+        font-size:25px !important;
+    }
+}
+</style>
+
+
+<style id="cover-names-v4">
+/* =========================================================
+   V4 — Cân khoảng cách BÍCH NGỌC / and / HOÀNG TÙNG
+   ========================================================= */
+
+/* Dùng flex column để khoảng cách 3 thành phần ổn định, không còn phụ thuộc
+   margin âm của ảnh "and". */
+.couple-names{
+    position:absolute !important;
+    top:31px !important;
+    left:28px !important;
+    width:364px !important;
+    height:125px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:3px !important;
+    overflow:visible !important;
+    text-align:center !important;
+}
+
+.couple-names h3{
+    position:relative !important;
+    display:block !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-family:"WeddingSerif", Georgia, "Times New Roman", serif !important;
+    font-size:37px !important;
+    font-weight:400 !important;
+    line-height:1 !important;
+    letter-spacing:.15px !important;
+    white-space:nowrap !important;
+    text-align:center !important;
+}
+
+/* "and" nằm chính giữa, có vùng riêng nên không chạm chữ trên/dưới */
+.couple-names .ampersand{
+    position:relative !important;
+    display:block !important;
+    flex:0 0 auto !important;
+    width:106px !important;
+    height:20px !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    transform:none !important;
+}
+
+/* Bảo đảm hai tên luôn dùng đúng nội dung cá nhân */
+#coverBride,
+#coverGroom{
+    text-transform:uppercase !important;
+}
+
+/* Cho boarding pass thấp thêm vài px để cụm tên có khoảng thở */
+.boarding-pass-card{
+    top:169px !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -371,7 +638,23 @@
 
     if($("coverBride")) $("coverBride").textContent = (cp.bride || "Cô dâu").toLocaleUpperCase("vi-VN");
     if($("coverGroom")) $("coverGroom").textContent = (cp.groom || "Chú rể").toLocaleUpperCase("vi-VN");
-    if($("coverGuest")) $("coverGuest").textContent = guestName();
+    if($("coverGuest")) {
+        $("coverGuest").textContent = guestName();
+
+        // Tự co chữ để tên khách luôn nằm trên một dòng.
+        // Ví dụ "Quý khách" giữ khoảng 25px; tên dài sẽ giảm dần tối đa tới 16px.
+        const guestEl = $("coverGuest");
+        let size = 25;
+        guestEl.style.fontSize = size + "px";
+
+        requestAnimationFrame(function fitGuestName(){
+            const maxWidth = 166;
+            while(guestEl.scrollWidth > maxWidth && size > 16){
+                size -= 1;
+                guestEl.style.fontSize = size + "px";
+            }
+        });
+    }
     if($("coverMonogram")) $("coverMonogram").textContent = cv.monogram || "TN";
     if($("coverDate")) $("coverDate").textContent = dottedDate(ev.date);
 
@@ -389,13 +672,19 @@
     }
 
     function openInvitation(){
-        if(window.parent && window.parent !== window){
-            window.parent.postMessage({type:"OPEN_WEDDING_INVITATION"}, "*");
-        }else{
-            const params = new URLSearchParams(location.search);
-            params.set("open", "1");
-            location.href = "index.html?" + params.toString();
-        }
+        if(document.body.classList.contains("cover-leaving")) return;
+        document.body.classList.add("cover-leaving");
+
+        // Let the cover animate first, then reveal the main invitation.
+        window.setTimeout(function(){
+            if(window.parent && window.parent !== window){
+                window.parent.postMessage({type:"OPEN_WEDDING_INVITATION"}, "*");
+            }else{
+                const params = new URLSearchParams(location.search);
+                params.set("open", "1");
+                location.href = "index.html?" + params.toString();
+            }
+        }, 470);
     }
 
     const btn = $("openCoverBtn");
