@@ -1187,6 +1187,67 @@ input, textarea, select{
 }
 </style>
 
+
+<style id="family-fit-v19">
+/* =========================================================
+   V19 — FAMILY IMAGE TRUE FIT
+   LadiPage gốc đang để background của các ảnh Family cao
+   ~185–207px trong khi khung chỉ cao ~103px, nên ảnh vẫn bị
+   cắt dù file nguồn đã đúng tỷ lệ 1416x1000.
+   ========================================================= */
+
+/* Khung ảnh nhỏ thực tế: ~146.416 x 103.388 px (≈ 1.416:1) */
+#IMAGE61 > .ladi-image > .ladi-image-background,
+#IMAGE77 > .ladi-image > .ladi-image-background,
+#IMAGE79 > .ladi-image > .ladi-image-background,
+#IMAGE81 > .ladi-image > .ladi-image-background,
+#IMAGE83 > .ladi-image > .ladi-image-background,
+#IMAGE85 > .ladi-image > .ladi-image-background,
+#IMAGE87 > .ladi-image > .ladi-image-background{
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+
+    transform:none !important;
+}
+
+/* Đảm bảo phần ladi-image đúng kích thước khung và crop chỉ theo border-radius */
+#IMAGE61 > .ladi-image,
+#IMAGE77 > .ladi-image,
+#IMAGE79 > .ladi-image,
+#IMAGE81 > .ladi-image,
+#IMAGE83 > .ladi-image,
+#IMAGE85 > .ladi-image,
+#IMAGE87 > .ladi-image{
+    width:100% !important;
+    height:100% !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+}
+
+/* Khi dải film được clone để chạy loop, các bản clone cũng dùng cùng rule */
+#GROUP126 [id="IMAGE61"] > .ladi-image > .ladi-image-background,
+#GROUP126 [id="IMAGE77"] > .ladi-image > .ladi-image-background,
+#GROUP126 [id="IMAGE79"] > .ladi-image > .ladi-image-background,
+#GROUP126 [id="IMAGE81"] > .ladi-image > .ladi-image-background,
+#GROUP126 [id="IMAGE83"] > .ladi-image > .ladi-image-background,
+#GROUP126 [id="IMAGE85"] > .ladi-image > .ladi-image-background,
+#GROUP126 [id="IMAGE87"] > .ladi-image > .ladi-image-background{
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+}
+</style>
+
 </head>
 <body class="">
 
