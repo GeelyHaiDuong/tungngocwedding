@@ -569,6 +569,393 @@ body.cover-leaving .mobile-container::after{
 }
 </style>
 
+
+<style id="cover-and-center-v5">
+/* =========================================================
+   V5 — "and" là text thật, căn giữa tuyệt đối
+   Không còn phụ thuộc khoảng trắng bên trong file PNG.
+   ========================================================= */
+
+.couple-names{
+    position:absolute !important;
+    top:30px !important;
+    left:28px !important;
+    width:364px !important;
+    height:128px !important;
+
+    display:grid !important;
+    grid-template-rows:40px 24px 40px !important;
+    row-gap:3px !important;
+    align-items:center !important;
+    justify-items:center !important;
+
+    overflow:visible !important;
+    text-align:center !important;
+}
+
+.couple-names h3{
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-family:"WeddingSerif", Georgia, "Times New Roman", serif !important;
+    font-size:37px !important;
+    font-weight:400 !important;
+    line-height:40px !important;
+    letter-spacing:.15px !important;
+    white-space:nowrap !important;
+    text-align:center !important;
+}
+
+/* AND được render bằng chữ thay vì ảnh PNG.
+   Khung 150px nằm chính giữa container 364px nên không thể lệch trái/phải. */
+.couple-names .ampersand-text{
+    position:relative !important;
+    width:150px !important;
+    height:24px !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    margin:0 !important;
+    padding:0 !important;
+    transform:none !important;
+    overflow:visible !important;
+}
+
+/* Chữ and */
+.couple-names .ampersand-text span{
+    position:relative;
+    z-index:2;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    height:24px;
+    padding:0 8px;
+
+    background:transparent;
+    color:#111;
+
+    font-family:"WeddingScript","Brush Script MT",cursive !important;
+    font-size:22px !important;
+    font-weight:400 !important;
+    line-height:24px !important;
+    letter-spacing:0 !important;
+
+    transform:translateY(-1px);
+}
+
+/* Hai nét mảnh hai bên giúp chữ "and" cân trực quan giống mẫu */
+.couple-names .ampersand-text::before,
+.couple-names .ampersand-text::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:48px;
+    height:1px;
+    background:#111;
+    opacity:.85;
+}
+
+.couple-names .ampersand-text::before{
+    left:0;
+    transform:translateY(-50%) rotate(-2deg);
+}
+.couple-names .ampersand-text::after{
+    right:0;
+    transform:translateY(-50%) rotate(2deg);
+}
+
+/* Khoảng thở giữa cụm tên và boarding pass */
+.boarding-pass-card{
+    top:169px !important;
+}
+
+/* Giữ tên khách 1 dòng như V3 */
+.boarding-pass-card .guest-name{
+    width:166px !important;
+    max-width:166px !important;
+    white-space:nowrap !important;
+}
+</style>
+
+
+<style id="cover-center-route-v6">
+/* =========================================================
+   V6 — Căn cụm tên đúng tâm màn hình + bổ sung đường bay trang trí
+   ========================================================= */
+
+/* Tâm tuyệt đối của layout 420px = 210px.
+   Dùng left:50% + translateX(-50%) để không bị lệch do width/margin. */
+.couple-names{
+    position:absolute !important;
+    top:28px !important;
+    left:50% !important;
+    width:330px !important;
+    height:130px !important;
+    transform:translateX(-50%) !important;
+
+    display:grid !important;
+    grid-template-rows:40px 24px 40px !important;
+    row-gap:4px !important;
+    align-items:center !important;
+    justify-items:center !important;
+
+    margin:0 !important;
+    padding:0 !important;
+    text-align:center !important;
+    overflow:visible !important;
+    z-index:18 !important;
+}
+
+.couple-names h3{
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-family:"WeddingSerif", Georgia, "Times New Roman", serif !important;
+    font-size:37px !important;
+    font-weight:400 !important;
+    line-height:40px !important;
+    letter-spacing:.1px !important;
+    white-space:nowrap !important;
+    text-align:center !important;
+}
+
+/* "and" ở đúng trục 50% của tên trên và tên dưới */
+.couple-names .ampersand-text{
+    width:142px !important;
+    height:24px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    margin:0 auto !important;
+    padding:0 !important;
+}
+.couple-names .ampersand-text span{
+    transform:translateY(-1px) !important;
+}
+
+/* Hai đường bay nằm sau nội dung chính nhưng trên background */
+.cover-flight-route{
+    position:absolute;
+    z-index:4;
+    pointer-events:none;
+    overflow:visible;
+}
+
+.cover-flight-route path{
+    fill:none;
+    stroke:#111;
+    stroke-width:1.65;
+    stroke-linecap:round;
+    stroke-dasharray:5.5 5.5;
+    opacity:.94;
+}
+
+/* Đường bên phải: từ máy bay trên cùng, uốn xuống tới gần giữa trang */
+.cover-flight-route.route-right{
+    top:56px;
+    right:-8px;
+    width:145px;
+    height:510px;
+}
+
+/* Đường cong góc trái phía dưới */
+.cover-flight-route.route-left{
+    left:-16px;
+    bottom:8px;
+    width:135px;
+    height:245px;
+}
+
+/* Máy bay nhỏ ở đầu đường bay phải */
+.cover-route-plane{
+    position:absolute;
+    z-index:7;
+    top:56px;
+    right:77px;
+    width:39px;
+    height:39px;
+    pointer-events:none;
+    transform:rotate(17deg);
+}
+.cover-route-plane svg{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+/* Giữ các card ở trên đường bay */
+.boarding-pass-card{z-index:11 !important;}
+.passport-cover{z-index:15 !important;}
+.open-card-btn{z-index:30 !important;}
+
+@media(max-width:419px){
+    /* Layout 420px đã được scale nguyên khối, không cần thay tọa độ */
+    .couple-names{
+        left:50% !important;
+        width:330px !important;
+    }
+}
+</style>
+
+
+<style id="flight-route-v7">
+/* =========================================================
+   V7 — Flight route theo mẫu:
+   - 1 đường liên tục từ máy bay -> nút thắt trái tim
+   - đi sau passport -> xuất hiện lại ở góc trái dưới
+   - kết thúc chính xác tại pin của "NHẤN ĐỂ MỞ THIỆP"
+   ========================================================= */
+
+/* Disable the old V6 route elements if legacy markup/CSS remains cached */
+.cover-flight-route,
+.cover-route-plane{
+    display:none !important;
+}
+
+.flight-route-v7{
+    position:absolute;
+    inset:0;
+    width:420px;
+    height:862px;
+    z-index:4;
+    pointer-events:none;
+    overflow:visible;
+}
+
+.flight-route-line{
+    fill:none;
+    stroke:#111;
+    stroke-width:1.65;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:5.8 5.8;
+    opacity:.92;
+
+    /* subtle moving dash gives a flight feeling without being distracting */
+    animation:routeDashMove 10s linear infinite;
+}
+
+/* Heart knot sits on the upper-right route.
+   It is part of the actual SVG path, not a separate icon. */
+
+.flight-destination-halo{
+    fill:none;
+    stroke:#111;
+    stroke-width:1.2;
+    opacity:.28;
+}
+.flight-destination-dot{
+    fill:#111;
+}
+
+/* Improved airplane */
+.flight-plane-v7{
+    position:absolute;
+    top:49px;
+    left:319px;
+    width:54px;
+    height:54px;
+    z-index:8;
+    pointer-events:none;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.16));
+    transform-origin:center;
+    animation:planeFloatV7 3.2s ease-in-out infinite;
+}
+.flight-plane-v7 svg{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+/* Route must stay behind the paper/passport layers */
+.boarding-pass-card{z-index:11 !important;}
+.passport-cover{z-index:15 !important;}
+.couple-names{z-index:18 !important;}
+.open-card-btn{z-index:30 !important;}
+
+/* The original pseudo-pin is now treated as the destination marker.
+   Move it so its visual center sits on SVG endpoint x=139, y=703. */
+.open-card-btn{
+    top:690px !important;
+}
+.open-card-btn::before{
+    position:relative;
+    z-index:31;
+    box-shadow:0 0 0 3px rgba(238,245,246,.72);
+}
+
+/* make the route appear to terminate into the destination pin */
+@keyframes routeDashMove{
+    from{stroke-dashoffset:0}
+    to{stroke-dashoffset:-58}
+}
+@keyframes planeFloatV7{
+    0%,100%{transform:translate3d(0,0,0) rotate(-1deg)}
+    50%{transform:translate3d(2px,-3px,0) rotate(2deg)}
+}
+
+@media(prefers-reduced-motion:reduce){
+    .flight-route-line,
+    .flight-plane-v7{
+        animation:none !important;
+    }
+}
+</style>
+
+
+<style id="flight-plane-image-v8">
+/* V8 — dùng trực tiếp silhouette máy bay người dùng cung cấp */
+.flight-plane-v7{
+    top:47px !important;
+    left:318px !important;
+    width:58px !important;
+    height:58px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    transform-origin:center center !important;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.14));
+}
+
+.flight-plane-v7 img{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    transform:rotate(18deg) !important;
+    transform-origin:center center !important;
+    user-select:none !important;
+    -webkit-user-drag:none !important;
+}
+
+/* Animation now applies to the holder; image keeps the requested flight angle */
+@keyframes planeFloatV8{
+    0%,100%{transform:translate3d(0,0,0)}
+    50%{transform:translate3d(2px,-3px,0)}
+}
+.flight-plane-v7{
+    animation:planeFloatV8 3.2s ease-in-out infinite !important;
+}
+
+@media(prefers-reduced-motion:reduce){
+    .flight-plane-v7{animation:none !important}
+}
+</style>
+
 </head>
 <body>
 
@@ -576,11 +963,43 @@ body.cover-leaving .mobile-container::after{
     <div class="overlay"></div>
     
     <div class="content-layer">
-        
-        <!-- Tên Cô dâu & Chú rể -->
+
+        <!-- Flight route V7: one continuous route, heart knot, destination at open-card button -->
+        <svg class="flight-route-v7" viewBox="0 0 420 862" aria-hidden="true">
+            <path class="flight-route-line"
+                  d="
+                  M 348 78
+                  C 382 95, 404 129, 401 169
+                  C 398 202, 385 224, 360 238
+
+                  C 350 225, 330 225, 323 239
+                  C 314 257, 333 274, 350 290
+                  C 367 274, 386 257, 377 239
+                  C 370 225, 350 225, 340 238
+                  C 334 245, 339 255, 350 261
+                  C 362 255, 367 245, 360 238
+
+                  C 389 278, 405 322, 406 372
+                  C 408 432, 398 492, 379 542
+                  C 352 612, 300 640, 231 647
+                  C 159 654, 86 620, 43 655
+                  C 12 680, 13 724, 34 750
+                  C 58 780, 97 768, 126 747
+                  C 137 739, 142 721, 139 703
+                  "/>
+
+            <!-- small destination halo exactly where the button pin sits -->
+            <circle class="flight-destination-halo" cx="139" cy="703" r="8"/>
+            <circle class="flight-destination-dot" cx="139" cy="703" r="3.4"/>
+        </svg>
+
+        <!-- Cleaner airplane silhouette at route origin -->
+        <div class="flight-plane-v7" aria-hidden="true"><img src="assets/images/plane-cover.png" alt=""></div>
+
+<!-- Tên Cô dâu & Chú rể -->
         <div class="couple-names fade-in" style="animation-delay: 0.2s;">
             <h3 id="coverBride">BÍCH NGỌC</h3>
-            <img id="coverAnd" class="ampersand" src="https://w.ladicdn.com/s450x350/691804d3a89f3900120ca482/and-20260721145856-qn4u1.png" alt="and">
+            <div id="coverAnd" class="ampersand-text" aria-label="and"><span>and</span></div>
             <h3 id="coverGroom">HOÀNG TÙNG</h3>
         </div>
 
@@ -658,7 +1077,7 @@ body.cover-leaving .mobile-container::after{
     if($("coverMonogram")) $("coverMonogram").textContent = cv.monogram || "TN";
     if($("coverDate")) $("coverDate").textContent = dottedDate(ev.date);
 
-    if($("coverAnd") && cv.andImage) $("coverAnd").src = cv.andImage;
+    if($("coverAnd") && $("coverAnd").tagName === "IMG" && cv.andImage) $("coverAnd").src = cv.andImage;
     if($("coverPlane") && cv.planeImage) $("coverPlane").src = cv.planeImage;
     if($("coverStamp") && cv.stampImage) $("coverStamp").src = cv.stampImage;
 
