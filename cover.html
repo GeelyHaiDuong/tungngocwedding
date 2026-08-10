@@ -5,7 +5,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="cover-version" content="20260810-1554-v9">
+    <meta name="cover-version" content="20260810-1707-v11">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1023,9 +1023,50 @@ body.cover-leaving .mobile-container::after{
 }
 </style>
 
+
+<style id="plane-direction-v11">
+/* =========================================================
+   V11 — Máy bay hướng chéo lên phía tên cô dâu/chú rể
+   + thu gọn đoạn nét đứt dưới
+   ========================================================= */
+
+/* Plane image supplied by user has its nose pointing to the right.
+   Rotate ~-145° so the nose points diagonally up-left toward the names. */
+.flight-plane-v7{
+    top:55px !important;
+    left:323px !important;
+    width:56px !important;
+    height:56px !important;
+    animation:planeFloatV11 3.2s ease-in-out infinite !important;
+}
+
+.flight-plane-v7 img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    transform:rotate(-145deg) !important;
+    transform-origin:center center !important;
+}
+
+/* Slightly lighter/smaller lower route so it doesn't dominate the cover. */
+.flight-route-line{
+    stroke-width:1.5 !important;
+    stroke-dasharray:5.2 5.2 !important;
+}
+
+@keyframes planeFloatV11{
+    0%,100%{transform:translate3d(0,0,0)}
+    50%{transform:translate3d(-2px,-3px,0)}
+}
+
+@media(prefers-reduced-motion:reduce){
+    .flight-plane-v7{animation:none !important}
+}
+</style>
+
 </head>
 <body>
-<!-- COVER_BUILD:20260810-1554-v9 -->
+<!-- COVER_BUILD:20260810-1707-v11 -->
 
 <div class="mobile-container">
     <div class="overlay"></div>
@@ -1036,24 +1077,24 @@ body.cover-leaving .mobile-container::after{
         <svg class="flight-route-v7" viewBox="0 0 420 862" aria-hidden="true">
             <path class="flight-route-line"
                   d="
-                  M 348 78
-                  C 382 95, 404 129, 401 169
-                  C 398 202, 385 224, 360 238
+                  M 344 86
+                  C 378 102, 401 135, 398 174
+                  C 395 205, 382 226, 358 240
 
-                  C 350 225, 330 225, 323 239
-                  C 314 257, 333 274, 350 290
-                  C 367 274, 386 257, 377 239
-                  C 370 225, 350 225, 340 238
-                  C 334 245, 339 255, 350 261
-                  C 362 255, 367 245, 360 238
+                  C 348 227, 329 227, 322 241
+                  C 314 257, 332 274, 349 290
+                  C 366 274, 384 257, 376 241
+                  C 369 227, 350 227, 340 240
+                  C 334 247, 339 256, 349 262
+                  C 360 256, 365 247, 358 240
 
-                  C 389 278, 405 322, 406 372
-                  C 408 432, 398 492, 379 542
-                  C 352 612, 300 640, 231 647
-                  C 159 654, 86 620, 43 655
-                  C 12 680, 13 724, 34 750
-                  C 58 780, 97 768, 126 747
-                  C 137 739, 142 721, 139 703
+                  C 386 281, 401 326, 401 373
+                  C 402 431, 392 488, 374 535
+                  C 349 601, 301 632, 239 642
+
+                  C 188 650, 139 641, 105 659
+                  C 80 672, 75 697, 87 714
+                  C 99 731, 121 724, 139 703
                   "/>
 
             <!-- small destination halo exactly where the button pin sits -->
@@ -1062,7 +1103,7 @@ body.cover-leaving .mobile-container::after{
         </svg>
 
         <!-- Cleaner airplane silhouette at route origin -->
-        <div class="flight-plane-v7" aria-hidden="true"><img src="assets/images/plane-cover.png?v=20260810-1554-v9" alt=""></div>
+        <div class="flight-plane-v7" aria-hidden="true"><img src="assets/images/plane-cover.png?v=20260810-1707-v11" alt=""></div>
 
 <!-- Tên Cô dâu & Chú rể -->
         <div class="couple-names fade-in" style="animation-delay: 0.2s;">
