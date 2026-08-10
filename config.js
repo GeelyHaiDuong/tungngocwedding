@@ -7,11 +7,28 @@
 */
 
 window.WEDDING_CONFIG = {
+  guest: {
+    defaultName: "Quý khách",
+    queryKeys: ["guest", "khach", "to"]
+  },
+
   couple: {
     groom: "Hoàng Tùng",
     bride: "Bích Ngọc",
     groomInitials: "HT",
     brideInitials: "BN"
+  },
+
+  cover: {
+    // Chữ giữa bìa passport. Có thể đổi thành "TN", "HT", "BN"...
+    monogram: "TN",
+
+    // Tài nguyên cover Gemini
+    background: "https://w.ladicdn.com/s750x1200/691804d3a89f3900120ca482/bg5-20260723093909-sw6oc.jpg",
+    andImage: "https://w.ladicdn.com/s450x350/691804d3a89f3900120ca482/and-20260721145856-qn4u1.png",
+    passportImage: "https://w.ladicdn.com/s600x650/691804d3a89f3900120ca482/2-20260723094152-hrck4.png",
+    planeImage: "https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/mv-20260723092425-by2vu.png",
+    stampImage: "https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/paris2-20260723105805-hasav.png"
   },
 
   event: {

@@ -524,8 +524,40 @@
 }
 </style>
 
+
+<style id="cover-iframe-shell">
+html.cover-shell-lock, body.cover-shell-lock{
+    overflow:hidden !important;
+    height:100% !important;
+}
+#wedding-cover-shell{
+    position:fixed;
+    inset:0;
+    z-index:2147483000;
+    background:#edf5f6;
+    opacity:1;
+    transition:opacity .55s ease;
+}
+#wedding-cover-shell.is-closing{
+    opacity:0;
+    pointer-events:none;
+}
+#wedding-cover-frame{
+    display:block;
+    width:100%;
+    height:100%;
+    border:0;
+    background:#edf5f6;
+}
+</style>
+
 </head>
 <body class="">
+
+<div id="wedding-cover-shell">
+    <iframe id="wedding-cover-frame" title="Bìa thiệp cưới" allow="autoplay"></iframe>
+</div>
+
     <button id="music-toggle" type="button" aria-label="Bật nhạc" title="Bật nhạc" aria-pressed="false">
       <svg id="music-icon" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
         <path d="M42 9.5c1.2-.35 2.4.55 2.4 1.8v27.15c0 5.15-4.35 9.35-9.7 9.35-4.65 0-8.4-3.1-8.4-6.95s3.75-6.95 8.4-6.95c1.75 0 3.4.45 4.75 1.25V21.2l-18.9 5.35v19.1c0 5.15-4.35 9.35-9.7 9.35-4.65 0-8.4-3.1-8.4-6.95s3.75-6.95 8.4-6.95c1.75 0 3.4.45 4.75 1.25V20.3c0-1.05.7-2 1.7-2.3L42 9.5Z"></path>
@@ -1474,5 +1506,60 @@
 })();
 </script>
     <script src="customize.js"></script>
+
+<script id="cover-shell-runtime">
+(function(){
+    "use strict";
+
+    const params = new URLSearchParams(window.location.search);
+    const shell = document.getElementById("wedding-cover-shell");
+    const frame = document.getElementById("wedding-cover-frame");
+
+    function unlock(){
+        document.documentElement.classList.remove("cover-shell-lock");
+        document.body.classList.remove("cover-shell-lock");
+    }
+
+    function closeCover(){
+        if(!shell) return;
+        shell.classList.add("is-closing");
+
+        // The click occurred inside the iframe but the message arrives immediately.
+        // Trigger a harmless user-like event so the existing music logic can react
+        // once the main invitation becomes visible.
+        try{ document.dispatchEvent(new Event("touchstart",{bubbles:true})); }catch(e){}
+
+        setTimeout(function(){
+            shell.remove();
+            unlock();
+            window.scrollTo({top:0,behavior:"instant"});
+        },550);
+    }
+
+    if(params.get("open") === "1"){
+        if(shell) shell.remove();
+        unlock();
+    }else{
+        document.documentElement.classList.add("cover-shell-lock");
+        document.body.classList.add("cover-shell-lock");
+
+        if(frame){
+            const coverParams = new URLSearchParams();
+            for(const key of ["guest","khach","to"]){
+                const value = params.get(key);
+                if(value) coverParams.set(key,value);
+            }
+            frame.src = "cover.html" + (coverParams.toString() ? "?" + coverParams.toString() : "");
+        }
+    }
+
+    window.addEventListener("message", function(event){
+        if(event && event.data && event.data.type === "OPEN_WEDDING_INVITATION"){
+            closeCover();
+        }
+    });
+})();
+</script>
+
 </body>
 </html>

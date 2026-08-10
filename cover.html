@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Cover - Hoàng Tùng &amp; Bích Ngọc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Container mô phỏng kích thước Mobile của LadiPage */
+        .mobile-container {
+            position: relative;
+            width: 420px;
+            max-width: 100vw;
+            min-height: 862px;
+            background-image: url("https://w.ladicdn.com/s750x1200/691804d3a89f3900120ca482/bg5-20260723093909-sw6oc.jpg");
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        /* Lớp phủ mờ background */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.5);
+            z-index: 1;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Cụm Tên Cô Dâu Chú Rể */
+        .couple-names {
+            position: absolute;
+            top: 40px;
+            left: 66px;
+            width: 254px;
+            text-align: center;
+        }
+
+        .couple-names h3 {
+            font-size: 40px;
+            text-transform: uppercase;
+            color: #010101;
+            line-height: 1.6;
+        }
+
+        .couple-names .ampersand {
+            width: 147px;
+            margin: -20px auto;
+        }
+
+        /* Khung Boarding Pass */
+        .boarding-pass-card {
+            position: absolute;
+            top: 161px;
+            left: 87px;
+            width: 223px;
+            height: 498px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 5px 5px 20px -15px rgba(0, 28, 24, 1);
+            padding: 20px 10px;
+            text-align: center;
+        }
+
+        .boarding-pass-card .invite-text {
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .boarding-pass-card .guest-name {
+            font-size: 26px;
+            font-style: italic;
+            margin-top: 10px;
+            color: #000;
+        }
+
+        .boarding-pass-card .plane-icon {
+            width: 98px;
+            margin-top: 320px;
+        }
+
+        /* Nút nhấn mở thiệp */
+        .open-card-btn {
+            position: absolute;
+            top: 690px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            text-transform: uppercase;
+            text-decoration: underline;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 20;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Nhóm cover Passport */
+        .passport-cover {
+            position: absolute;
+            top: 280px;
+            left: 71px;
+            width: 275px;
+            height: 327px;
+            background-image: url("https://w.ladicdn.com/s600x650/691804d3a89f3900120ca482/2-20260723094152-hrck4.png");
+            background-size: cover;
+            text-align: center;
+            color: #fff;
+            padding-top: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .passport-cover:hover {
+            transform: scale(1.02);
+        }
+
+        .passport-cover h1 {
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .passport-cover p.sub {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .passport-cover .hh-logo {
+            font-size: 23px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-top: 80px;
+        }
+
+        .passport-cover .date {
+            font-size: 12px;
+            letter-spacing: 4px;
+            margin-top: 100px;
+        }
+
+        /* Tem trang trí */
+        .stamp-paris {
+            position: absolute;
+            top: 20px;
+            right: -20px;
+            width: 86px;
+            transform: rotate(-24deg);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+    </style>
+    <script src="config.js"></script>
+
+<style id="cover-fix-patch">
+    html, body { min-height: 100%; }
+    body { overflow-x: hidden; }
+
+    .boarding-pass-card{
+        padding-right: 42px !important;
+        overflow: hidden;
+    }
+
+    .boarding-side-label{
+        position:absolute;
+        top:0;
+        right:0;
+        width:38px;
+        height:100%;
+        background:#718d95;
+        color:#fff;
+        writing-mode:vertical-rl;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-family:Georgia,serif;
+        font-size:13px;
+        letter-spacing:.3px;
+        z-index:2;
+    }
+
+    .ticket-barcode{
+        position:absolute;
+        left:0;
+        right:38px;
+        bottom:0;
+        height:72px;
+        border-top:1px dashed #9eabad;
+        background:#fff;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+    .ticket-barcode::before{
+        content:"";
+        width:105px;
+        height:31px;
+        background:repeating-linear-gradient(
+            90deg,
+            #111 0 2px, transparent 2px 4px,
+            #111 4px 5px, transparent 5px 8px,
+            #111 8px 11px, transparent 11px 13px
+        );
+    }
+    .ticket-barcode::after{
+        content:"8 712345 670016";
+        position:absolute;
+        bottom:5px;
+        left:0;
+        right:0;
+        text-align:center;
+        font:11px/1 Arial,sans-serif;
+        letter-spacing:1px;
+    }
+
+    #coverPassportClick{
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+    }
+    #coverPassportClick .passport-cover{
+        pointer-events:auto;
+    }
+
+    .open-card-btn{
+        border:0 !important;
+        background:transparent !important;
+        font-family:inherit !important;
+        white-space:nowrap;
+    }
+
+    /* Add pin like the screenshot */
+    .open-card-btn::before{
+        content:"";
+        display:inline-block;
+        width:15px;
+        height:15px;
+        margin-right:12px;
+        vertical-align:-2px;
+        border-radius:50% 50% 50% 0;
+        background:#000;
+        transform:rotate(-45deg);
+    }
+
+    /* The source was designed at 420px. Keep its geometry but scale uniformly
+       on smaller mobile viewports instead of letting individual elements wrap. */
+    @media (max-width: 419px){
+        body{
+            display:block !important;
+            width:100vw;
+            overflow:hidden;
+        }
+        .mobile-container{
+            width:420px !important;
+            max-width:none !important;
+            left:50%;
+            margin-left:-210px;
+            transform:scale(calc(100vw / 420));
+            transform-origin:top center;
+            box-shadow:none !important;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+<div class="mobile-container">
+    <div class="overlay"></div>
+    
+    <div class="content-layer">
+        
+        <!-- Tên Cô dâu & Chú rể -->
+        <div class="couple-names fade-in" style="animation-delay: 0.2s;">
+            <h3 id="coverBride">BÍCH NGỌC</h3>
+            <img id="coverAnd" class="ampersand" src="https://w.ladicdn.com/s450x350/691804d3a89f3900120ca482/and-20260721145856-qn4u1.png" alt="and">
+            <h3 id="coverGroom">HOÀNG TÙNG</h3>
+        </div>
+
+        <!-- Khung vé máy bay (Boarding Pass) -->
+        <div class="boarding-pass-card fade-in" style="animation-delay: 0.5s;"><div class="boarding-side-label">BOARDING PASS&nbsp;&nbsp;&nbsp;VIP</div>
+            <div class="invite-text">Trân trọng kính mời</div>
+            <div id="coverGuest" class="guest-name">Quý khách</div>
+            <img id="coverPlane" class="plane-icon" src="https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/mv-20260723092425-by2vu.png" alt="Plane"><div class="ticket-barcode" aria-hidden="true"></div>
+        </div>
+
+        <!-- Bìa Passport bên ngoài (Click để mở thiệp) -->
+        <div id="coverPassportClick" role="button" tabindex="0" aria-label="Mở thiệp"><div class="passport-cover fade-in" style="animation-delay: 0.8s;">
+                <h1>Passport</h1>
+                <p class="sub">Wedding Invitation</p>
+                <div id="coverMonogram" class="hh-logo">TN</div>
+                <div id="coverDate" class="date">27.09.2026</div>
+                <img id="coverStamp" class="stamp-paris" src="https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/paris2-20260723105805-hasav.png" alt="Paris Stamp">
+            </div></div>
+
+        <!-- Nút hướng dẫn -->
+        <button id="openCoverBtn" class="open-card-btn" type="button">Nhấn để mở thiệp</button>
+
+    </div>
+</div>
+
+
+<script id="cover-runtime">
+(function(){
+    "use strict";
+
+    const C = window.WEDDING_CONFIG || {};
+    const cp = C.couple || {};
+    const ev = C.event || {};
+    const cv = C.cover || {};
+    const guestCfg = C.guest || {};
+
+    const $ = id => document.getElementById(id);
+
+    function guestName(){
+        const keys = Array.isArray(guestCfg.queryKeys) && guestCfg.queryKeys.length
+            ? guestCfg.queryKeys : ["guest","khach","to"];
+        const params = new URLSearchParams(location.search);
+        for(const key of keys){
+            const value = params.get(key);
+            if(value && value.trim()) return value.trim();
+        }
+        return (guestCfg.defaultName || "Quý khách").trim();
+    }
+
+    function dottedDate(s){
+        if(!s) return "";
+        const a = String(s).split("-");
+        return a.length === 3 ? `${a[2]}.${a[1]}.${a[0]}` : s;
+    }
+
+    if($("coverBride")) $("coverBride").textContent = (cp.bride || "Cô dâu").toLocaleUpperCase("vi-VN");
+    if($("coverGroom")) $("coverGroom").textContent = (cp.groom || "Chú rể").toLocaleUpperCase("vi-VN");
+    if($("coverGuest")) $("coverGuest").textContent = guestName();
+    if($("coverMonogram")) $("coverMonogram").textContent = cv.monogram || "TN";
+    if($("coverDate")) $("coverDate").textContent = dottedDate(ev.date);
+
+    if($("coverAnd") && cv.andImage) $("coverAnd").src = cv.andImage;
+    if($("coverPlane") && cv.planeImage) $("coverPlane").src = cv.planeImage;
+    if($("coverStamp") && cv.stampImage) $("coverStamp").src = cv.stampImage;
+
+    const passport = document.querySelector(".passport-cover");
+    if(passport && cv.passportImage){
+        passport.style.backgroundImage = `url("${cv.passportImage}")`;
+    }
+    const stage = document.querySelector(".mobile-container");
+    if(stage && cv.background){
+        stage.style.backgroundImage = `url("${cv.background}")`;
+    }
+
+    function openInvitation(){
+        if(window.parent && window.parent !== window){
+            window.parent.postMessage({type:"OPEN_WEDDING_INVITATION"}, "*");
+        }else{
+            const params = new URLSearchParams(location.search);
+            params.set("open", "1");
+            location.href = "index.html?" + params.toString();
+        }
+    }
+
+    const btn = $("openCoverBtn");
+    if(btn) btn.addEventListener("click", openInvitation);
+
+    if(passport){
+        passport.addEventListener("click", openInvitation);
+        passport.addEventListener("keydown", function(e){
+            if(e.key === "Enter" || e.key === " "){
+                e.preventDefault();
+                openInvitation();
+            }
+        });
+    }
+})();
+</script>
+
+</body>
+</html>
