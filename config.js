@@ -112,13 +112,13 @@ window.WEDDING_CONFIG = {
     story: "https://w.ladicdn.com/s700x600/691804d3a89f3900120ca482/14-20260722101645-drqiz.jpg",
     familyMain: "https://w.ladicdn.com/s650x1000/691804d3a89f3900120ca482/15-20260723025713-ty-hl.jpg",
     familyFilm: [
-    "https://w.ladicdn.com/s450x500/691804d3a89f3900120ca482/23-20260723032439-1netg.jpg",
-    "https://w.ladicdn.com/s450x550/691804d3a89f3900120ca482/22-20260723032438-sktsb.jpg",
-    "https://w.ladicdn.com/s450x550/691804d3a89f3900120ca482/21-20260723032437-6616i.jpg",
-    "https://w.ladicdn.com/s450x550/691804d3a89f3900120ca482/18-20260723032434-rq-9o.jpg",
-    "https://w.ladicdn.com/s450x550/691804d3a89f3900120ca482/20-20260723032436-w09nw.jpg",
-    "https://w.ladicdn.com/s450x500/691804d3a89f3900120ca482/19-20260723032435-pormq.jpg",
-    "https://w.ladicdn.com/s450x500/691804d3a89f3900120ca482/24-20260723032440-t39wu.jpg"
+    "assets/images/family/family-01.jpg",
+    "assets/images/family/family-02.jpg",
+    "assets/images/family/family-03.jpg",
+    "assets/images/family/family-04.jpg",
+    "assets/images/family/family-05.jpg",
+    "assets/images/family/family-06.jpg",
+    "assets/images/family/family-01.jpg"
 ],
     groomPortrait: "https://w.ladicdn.com/s500x550/691804d3a89f3900120ca482/8-20260722050408-dyu3n.jpg",
     bridePortrait: "https://w.ladicdn.com/s500x550/691804d3a89f3900120ca482/9-20260722050408-a92-w.jpg",
@@ -154,3 +154,45 @@ window.WEDDING_CONFIG = {
     footer: "https://w.ladicdn.com/s750x650/691804d3a89f3900120ca482/untitled-session8397-20260723070608-fwixc.jpg"
   }
 };
+
+/*
+========================================================
+ PREVIEW OVERRIDE — dùng bởi chinh-sua.html
+ Khi URL có ?preview=1, dữ liệu chỉnh thử sẽ được lấy từ
+ localStorage. Trang web bình thường KHÔNG bị ảnh hưởng.
+========================================================
+*/
+(function () {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("preview") !== "1") return;
+
+    const raw = localStorage.getItem("WEDDING_CONFIG_PREVIEW_V1");
+    if (!raw) return;
+
+    const preview = JSON.parse(raw);
+
+    function isObject(v) {
+      return v && typeof v === "object" && !Array.isArray(v);
+    }
+
+    function merge(target, source) {
+      Object.keys(source || {}).forEach(function (key) {
+        const sv = source[key];
+        if (Array.isArray(sv)) {
+          target[key] = sv.slice();
+        } else if (isObject(sv)) {
+          if (!isObject(target[key])) target[key] = {};
+          merge(target[key], sv);
+        } else {
+          target[key] = sv;
+        }
+      });
+      return target;
+    }
+
+    window.WEDDING_CONFIG = merge(window.WEDDING_CONFIG || {}, preview || {});
+  } catch (e) {
+    console.warn("Không thể nạp dữ liệu xem trước:", e);
+  }
+})();
