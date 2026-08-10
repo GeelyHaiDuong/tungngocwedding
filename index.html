@@ -1015,6 +1015,177 @@ input, textarea, select{
 }
 </style>
 
+
+<style id="and-true-center-v16">
+/* =========================================================
+   V16 — TRUE CENTER
+   Dùng CSS Grid 3 hàng cố định cho cả 2 cụm tên.
+   Không còn căn bằng top rời rạc nên "and" luôn nằm đúng giữa.
+   ========================================================= */
+
+/* ===== CỤM 1 — SECTION5 / cửa sổ máy bay ===== */
+#SECTION5 #GROUP37{
+    height:136px !important;
+}
+
+#SECTION5 #GROUP37 > .ladi-group{
+    width:100% !important;
+    height:136px !important;
+    display:grid !important;
+    grid-template-rows:54px 28px 54px !important;
+    grid-template-columns:1fr !important;
+    align-items:center !important;
+    justify-items:center !important;
+    position:relative !important;
+    overflow:visible !important;
+}
+
+#SECTION5 #GROUP37 #HEADLINE87,
+#SECTION5 #GROUP37 #IMAGE50,
+#SECTION5 #GROUP37 #HEADLINE88{
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    transform:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    width:100% !important;
+}
+
+#SECTION5 #GROUP37 #HEADLINE87{grid-row:1 !important;}
+#SECTION5 #GROUP37 #IMAGE50{grid-row:2 !important;}
+#SECTION5 #GROUP37 #HEADLINE88{grid-row:3 !important;}
+
+/* ===== CỤM 2 — SECTION2 / Wedding Ticket ===== */
+#SECTION2 #GROUP13{
+    height:136px !important;
+}
+
+#SECTION2 #GROUP13 > .ladi-group{
+    width:100% !important;
+    height:136px !important;
+    display:grid !important;
+    grid-template-rows:54px 28px 54px !important;
+    grid-template-columns:1fr !important;
+    align-items:center !important;
+    justify-items:center !important;
+    position:relative !important;
+    overflow:visible !important;
+}
+
+#SECTION2 #GROUP13 #HEADLINE4,
+#SECTION2 #GROUP13 #IMAGE11,
+#SECTION2 #GROUP13 #HEADLINE7{
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    transform:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    width:100% !important;
+}
+
+#SECTION2 #GROUP13 #HEADLINE4{grid-row:1 !important;}
+#SECTION2 #GROUP13 #IMAGE11{grid-row:2 !important;}
+#SECTION2 #GROUP13 #HEADLINE7{grid-row:3 !important;}
+
+/* Hai dòng tên dùng đúng cùng một line box */
+#SECTION5 #GROUP37 #HEADLINE87 > .ladi-headline,
+#SECTION5 #GROUP37 #HEADLINE88 > .ladi-headline,
+#SECTION2 #GROUP13 #HEADLINE4 > .ladi-headline,
+#SECTION2 #GROUP13 #HEADLINE7 > .ladi-headline{
+    height:54px !important;
+    line-height:54px !important;
+    padding:0 !important;
+    margin:0 !important;
+    text-align:center !important;
+    vertical-align:middle !important;
+    box-sizing:border-box !important;
+}
+
+/* AND: một khung 176x28 nằm trọn vẹn ở hàng giữa */
+#SECTION5 #GROUP37 #IMAGE50,
+#SECTION2 #GROUP13 #IMAGE11{
+    width:176px !important;
+    height:28px !important;
+    justify-self:center !important;
+    align-self:center !important;
+}
+
+#SECTION5 #GROUP37 #IMAGE50 > .ladi-image,
+#SECTION2 #GROUP13 #IMAGE11 > .ladi-image{
+    position:relative !important;
+    width:176px !important;
+    height:28px !important;
+    overflow:visible !important;
+}
+
+/* Ẩn PNG cũ */
+#SECTION5 #GROUP37 #IMAGE50 .ladi-image-background,
+#SECTION2 #GROUP13 #IMAGE11 .ladi-image-background{
+    display:none !important;
+    background-image:none !important;
+}
+
+/* Chữ and chính giữa tuyệt đối */
+#SECTION5 #GROUP37 #IMAGE50 > .ladi-image::before,
+#SECTION2 #GROUP13 #IMAGE11 > .ladi-image::before{
+    content:"and";
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    transform:translate(-50%,-50%) !important;
+
+    width:56px !important;
+    height:28px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-family:"IzlTbGlkZTAIFFaWNrcGVuLnRZg","Brush Script MT",cursive !important;
+    font-size:22px !important;
+    font-weight:400 !important;
+    line-height:28px !important;
+    color:#111 !important;
+    white-space:nowrap !important;
+    z-index:2 !important;
+}
+
+/* Hai nét đối xứng hoàn toàn */
+#SECTION5 #GROUP37 #IMAGE50 > .ladi-image::after,
+#SECTION2 #GROUP13 #IMAGE11 > .ladi-image::after{
+    content:"";
+    position:absolute !important;
+    left:0 !important;
+    top:50% !important;
+    width:100% !important;
+    height:1px !important;
+    transform:translateY(-50%) !important;
+    background:
+        linear-gradient(
+            to right,
+            #111 0%,
+            #111 35%,
+            transparent 35%,
+            transparent 65%,
+            #111 65%,
+            #111 100%
+        ) !important;
+    opacity:.82 !important;
+    z-index:1 !important;
+}
+
+/* Không cho animation Ladi thay đổi vị trí của 3 hàng */
+#SECTION5 #GROUP37 .ladi-element.ladi-animation,
+#SECTION2 #GROUP13 .ladi-element.ladi-animation{
+    transform:none !important;
+}
+</style>
+
 </head>
 <body class="">
 
