@@ -5,7 +5,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="cover-version" content="20260810-1707-v11">
+    <meta name="cover-version" content="20260810-1826-v12">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1064,9 +1064,54 @@ body.cover-leaving .mobile-container::after{
 }
 </style>
 
+
+<style id="cover-mobile-stability-v12">
+html,body{
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow-x:hidden !important;
+    background:#edf5f6 !important;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+}
+body{display:block !important;}
+
+.mobile-container{
+    position:relative !important;
+    width:420px !important;
+    min-width:420px !important;
+    max-width:420px !important;
+    min-height:862px !important;
+    left:50% !important;
+    margin-left:-210px !important;
+    transform-origin:top center !important;
+    overflow:hidden !important;
+    box-shadow:none !important;
+}
+.content-layer{
+    width:420px !important;
+    min-width:420px !important;
+    min-height:862px !important;
+}
+.boarding-pass-card,
+.boarding-pass-card .guest-name,
+.boarding-pass-card .invite-text{
+    box-sizing:border-box !important;
+}
+.boarding-pass-card .guest-name{
+    white-space:nowrap !important;
+    overflow:visible !important;
+}
+.open-card-btn{
+    min-height:42px !important;
+    touch-action:manipulation;
+}
+</style>
+
 </head>
 <body>
-<!-- COVER_BUILD:20260810-1707-v11 -->
+<!-- COVER_BUILD:20260810-1826-v12 -->
 
 <div class="mobile-container">
     <div class="overlay"></div>
@@ -1103,7 +1148,7 @@ body.cover-leaving .mobile-container::after{
         </svg>
 
         <!-- Cleaner airplane silhouette at route origin -->
-        <div class="flight-plane-v7" aria-hidden="true"><img src="assets/images/plane-cover.png?v=20260810-1707-v11" alt=""></div>
+        <div class="flight-plane-v7" aria-hidden="true"><img src="assets/images/plane-cover.png?v=20260810-1826-v12" alt=""></div>
 
 <!-- Tên Cô dâu & Chú rể -->
         <div class="couple-names fade-in" style="animation-delay: 0.2s;">
@@ -1230,6 +1275,58 @@ body.cover-leaving .mobile-container::after{
             }
         });
     }
+})();
+</script>
+
+
+<script id="cover-mobile-fit-v12">
+(function(){
+    "use strict";
+
+    const BASE_WIDTH=420;
+    const BASE_HEIGHT=862;
+    let lastWidth=0;
+
+    function fitCover(){
+        const stage=document.querySelector(".mobile-container");
+        if(!stage) return;
+
+        const viewportWidth=Math.max(
+            1,
+            window.innerWidth || document.documentElement.clientWidth || BASE_WIDTH
+        );
+        const scale=Math.min(1, viewportWidth/BASE_WIDTH);
+
+        stage.style.width=BASE_WIDTH+"px";
+        stage.style.minWidth=BASE_WIDTH+"px";
+        stage.style.maxWidth=BASE_WIDTH+"px";
+        stage.style.left="50%";
+        stage.style.marginLeft=-(BASE_WIDTH/2)+"px";
+        stage.style.transformOrigin="top center";
+        stage.style.transform="scale("+scale.toFixed(6)+")";
+
+        const scaledHeight=Math.ceil(BASE_HEIGHT*scale);
+        document.body.style.minHeight=scaledHeight+"px";
+        document.documentElement.style.minHeight=scaledHeight+"px";
+
+        lastWidth=viewportWidth;
+    }
+
+    fitCover();
+
+    window.addEventListener("resize",function(){
+        const w=window.innerWidth;
+        if(Math.abs(w-lastWidth)>=2){
+            requestAnimationFrame(fitCover);
+        }
+    },{passive:true});
+
+    window.addEventListener("orientationchange",function(){
+        setTimeout(fitCover,80);
+        setTimeout(fitCover,300);
+    },{passive:true});
+
+    window.addEventListener("pageshow",fitCover,{passive:true});
 })();
 </script>
 

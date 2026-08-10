@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta name="cover-shell-version" content="20260810-1707-v11">
+    <meta name="cover-shell-version" content="20260810-1826-v12">
     <!-- GitHub-ready: chỉnh thông tin trong config.js -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Hoàng Tùng &amp; Bích Ngọc | Wedding Invitation 27.09.2026</title>
@@ -10,8 +10,7 @@
     <meta http-equiv="Expires" content="-1">
     <meta name="keywords" content="">
     <meta name="description" content="Thiệp cưới Hoàng Tùng &amp; Bích Ngọc - 27.09.2026">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript">
+<script type="text/javascript">
         window.ladi_viewport=function(b){var a=document;b=b?b:'innerWidth';var c=window[b];var d=true;if(typeof window.ladi_is_desktop=="undefined"||window.ladi_is_desktop==undefined){window.ladi_is_desktop=!d;}var e=960;var f=420;var g='';if(!d){g="width="+e+",user-scalable=no,initial-scale=1.0";}else{var h=1;var i=f;if(i!=c){h=c / i;}g="width="+i+",user-scalable=no,initial-scale="+h+",minimum-scale="+h+",maximum-scale="+h;}var j=a.getElementById("viewport");if(!j){j=a.createElement("meta");j.id="viewport";j.name="viewport";a.head.appendChild(j);}j.setAttribute("content",g);};
         window.ladi_viewport();
         window.ladi_fbq_data = [];
@@ -19,8 +18,7 @@
         window.ladi_ttq_data = [];
         window.ladi_ttq = function () {window.ladi_ttq_data.push(arguments);};
     </script>
-    <meta id="viewport" name="viewport" content="width=420,user-scalable=no,initial-scale=1.0238095238095237,minimum-scale=1.0238095238095237,maximum-scale=1.0238095238095237">
-    <link rel="canonical" href="https://www.nawngs.com/passportmau">
+<link rel="canonical" href="https://www.nawngs.com/passportmau">
     <meta property="og:url" content="https://www.nawngs.com/passportmau">
     <meta property="og:title" content="Hoàng Tùng &amp; Bích Ngọc | 27.09.2026">
     <meta property="og:type" content="website">
@@ -584,6 +582,58 @@ body.invitation-enter #SECTION5{
 @media(prefers-reduced-motion:reduce){
     #wedding-cover-shell{transition:none !important}
     body.invitation-enter #SECTION5{animation:none !important}
+}
+</style>
+
+
+<style id="mobile-stability-v12">
+html,body{
+    margin:0 !important;
+    padding:0 !important;
+    overflow-x:hidden !important;
+    overscroll-behavior-x:none;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+}
+.ladi-wraper{
+    width:420px !important;
+    min-width:420px !important;
+    max-width:420px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    overflow:hidden !important;
+}
+.ladi-section,
+.ladi-container{
+    width:420px !important;
+    max-width:420px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+}
+.ladi-headline,
+.ladi-form-control,
+button,input,textarea,select{
+    max-width:100%;
+    box-sizing:border-box;
+}
+input,textarea,select{
+    font-size:16px !important;
+}
+#wedding-cover-shell{
+    width:100vw !important;
+    height:100vh !important;
+    height:100dvh !important;
+    overflow:hidden !important;
+}
+#wedding-cover-frame{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    border:0 !important;
+}
+#music-toggle{
+    right:max(16px, env(safe-area-inset-right)) !important;
+    bottom:max(16px, env(safe-area-inset-bottom)) !important;
 }
 </style>
 
@@ -1589,7 +1639,7 @@ body.invitation-enter #SECTION5{
                 const value = params.get(key);
                 if(value) coverParams.set(key,value);
             }
-            coverParams.set("v", "20260810-1707-v11");
+            coverParams.set("v", "20260810-1826-v12");
             frame.src = "cover.html?" + coverParams.toString();
         }
     }
@@ -1599,6 +1649,37 @@ body.invitation-enter #SECTION5{
             closeCover();
         }
     });
+})();
+</script>
+
+
+<script id="mobile-viewport-runtime-v12">
+(function(){
+    "use strict";
+    let lastWidth = window.innerWidth;
+
+    function refreshLadiViewport(){
+        if(typeof window.ladi_viewport === "function"){
+            window.ladi_viewport("innerWidth");
+        }
+    }
+
+    window.addEventListener("orientationchange", function(){
+        setTimeout(refreshLadiViewport,120);
+        setTimeout(refreshLadiViewport,420);
+    }, {passive:true});
+
+    window.addEventListener("resize", function(){
+        const w=window.innerWidth;
+        if(Math.abs(w-lastWidth)>=20){
+            lastWidth=w;
+            setTimeout(refreshLadiViewport,80);
+        }
+    }, {passive:true});
+
+    window.addEventListener("pageshow", function(){
+        setTimeout(refreshLadiViewport,30);
+    }, {passive:true});
 })();
 </script>
 
