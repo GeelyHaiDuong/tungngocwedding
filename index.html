@@ -866,6 +866,155 @@ input, textarea, select{
 }
 </style>
 
+
+<style id="and-center-v15">
+/* =========================================================
+   V15 — căn "and" chính giữa BÍCH NGỌC và HOÀNG TÙNG
+   Áp dụng cho đúng 2 cụm tên:
+   1) SECTION5 / GROUP37
+   2) SECTION2 / GROUP13
+   ========================================================= */
+
+/* ---------- CỤM 1: ảnh cửa sổ máy bay ---------- */
+#GROUP37{
+    height:138px !important;
+}
+
+#GROUP37 #HEADLINE87{
+    top:0 !important;
+    left:0 !important;
+    width:100% !important;
+    height:52px !important;
+}
+
+#GROUP37 #HEADLINE88{
+    top:78px !important;
+    left:0 !important;
+    width:100% !important;
+    height:52px !important;
+}
+
+/* ---------- CỤM 2: phần Departure / quả địa cầu ---------- */
+#GROUP13{
+    height:138px !important;
+}
+
+#GROUP13 #HEADLINE4{
+    top:0 !important;
+    left:0 !important;
+    width:100% !important;
+    height:52px !important;
+}
+
+#GROUP13 #HEADLINE7{
+    top:78px !important;
+    left:0 !important;
+    width:100% !important;
+    height:52px !important;
+}
+
+/* Giữ 2 dòng tên có cùng baseline/line-height để khoảng cách cân nhau */
+#GROUP37 #HEADLINE87 > .ladi-headline,
+#GROUP37 #HEADLINE88 > .ladi-headline,
+#GROUP13 #HEADLINE4 > .ladi-headline,
+#GROUP13 #HEADLINE7 > .ladi-headline{
+    line-height:1.04 !important;
+    text-align:center !important;
+    margin:0 !important;
+    padding:0 !important;
+}
+
+/* =========================================================
+   AND: không dùng phần nhìn thấy bên trong PNG cũ nữa.
+   Render chữ thật + 2 nét mảnh cân xứng để không bị lệch do
+   khoảng trắng trong file PNG.
+   ========================================================= */
+#GROUP37 #IMAGE50,
+#GROUP13 #IMAGE11{
+    position:absolute !important;
+    top:53px !important;
+    left:50% !important;
+    width:176px !important;
+    height:24px !important;
+    transform:translateX(-50%) !important;
+    margin:0 !important;
+    z-index:5 !important;
+}
+
+/* Ẩn ảnh "and" cũ nhưng giữ element để không ảnh hưởng Ladi animation */
+#GROUP37 #IMAGE50 .ladi-image-background,
+#GROUP13 #IMAGE11 .ladi-image-background{
+    display:none !important;
+    background-image:none !important;
+}
+
+#GROUP37 #IMAGE50 > .ladi-image,
+#GROUP13 #IMAGE11 > .ladi-image{
+    position:relative !important;
+    width:176px !important;
+    height:24px !important;
+    overflow:visible !important;
+    opacity:1 !important;
+    filter:none !important;
+}
+
+/* chữ and */
+#GROUP37 #IMAGE50 > .ladi-image::before,
+#GROUP13 #IMAGE11 > .ladi-image::before{
+    content:"and";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -53%);
+    z-index:2;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:54px;
+    height:24px;
+
+    font-family:"IzlTbGlkZTAIFFaWNrcGVuLnRZg", "Brush Script MT", cursive;
+    font-size:22px;
+    font-weight:400;
+    line-height:24px;
+    color:#111;
+    text-align:center;
+    white-space:nowrap;
+}
+
+/* hai nét trang trí nằm đúng trục giữa */
+#GROUP37 #IMAGE50 > .ladi-image::after,
+#GROUP13 #IMAGE11 > .ladi-image::after{
+    content:"";
+    position:absolute;
+    left:0;
+    top:50%;
+    width:100%;
+    height:1px;
+    transform:translateY(-50%);
+    background:
+      linear-gradient(
+        to right,
+        #111 0,
+        #111 35%,
+        transparent 35%,
+        transparent 65%,
+        #111 65%,
+        #111 100%
+      );
+    opacity:.82;
+    z-index:1;
+}
+
+/* Khi animation chạy, không để transform của Ladi làm lệch trục X */
+#GROUP37 #IMAGE50.ladi-animation,
+#GROUP13 #IMAGE11.ladi-animation{
+    left:50% !important;
+}
+</style>
+
 </head>
 <body class="">
 
