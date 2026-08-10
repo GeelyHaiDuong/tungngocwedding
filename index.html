@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta name="cover-shell-version" content="20260810-1905-v13">
+    <meta name="cover-shell-version" content="20260810-1918-v14">
     <!-- GitHub-ready: chỉnh thông tin trong config.js -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Hoàng Tùng &amp; Bích Ngọc | Wedding Invitation 27.09.2026</title>
@@ -622,6 +622,247 @@ input, textarea, select{
 #music-toggle{
     right:max(16px, env(safe-area-inset-right)) !important;
     bottom:max(16px, env(safe-area-inset-bottom)) !important;
+}
+</style>
+
+
+<style id="wedding-gift-v14">
+/* =========================================================
+   V14 — Gửi quà mừng ở phần Xác nhận tham dự
+   ========================================================= */
+
+/* Extend the final section only enough for the new gift controls. */
+#SECTION9{
+    height:850px !important;
+}
+#SECTION9 #IMAGE100,
+#SECTION9 #IMAGE100 > .ladi-image > .ladi-image-background{
+    height:850px !important;
+}
+
+.wedding-gift-actions{
+    position:absolute;
+    top:510px;
+    left:23px;
+    width:374px;
+    z-index:20;
+    text-align:center;
+    color:#fff;
+    box-sizing:border-box;
+}
+
+.wedding-gift-title{
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:16px;
+    line-height:1.25;
+    letter-spacing:1.5px;
+    font-weight:600;
+}
+
+.wedding-gift-subtitle{
+    margin-top:5px;
+    font-size:12px;
+    line-height:1.4;
+    opacity:.9;
+}
+
+.wedding-gift-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:13px;
+}
+
+.wedding-gift-button{
+    appearance:none;
+    -webkit-appearance:none;
+    height:48px;
+    padding:0 8px;
+    border:1px solid rgba(255,255,255,.92);
+    border-radius:24px;
+    background:rgba(103,127,125,.88);
+    color:#fff;
+    font-family:inherit;
+    font-size:12.5px;
+    line-height:1.2;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    box-sizing:border-box;
+    touch-action:manipulation;
+    transition:transform .18s ease, background .18s ease;
+}
+
+.wedding-gift-button:active{
+    transform:scale(.97);
+}
+.wedding-gift-button:hover{
+    background:rgba(83,109,108,.96);
+}
+.gift-heart{
+    font-family:Georgia,serif;
+    font-size:19px;
+    line-height:1;
+    transform:translateY(-1px);
+}
+
+/* Modal */
+.wedding-gift-modal{
+    position:fixed;
+    inset:0;
+    z-index:2147483000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    box-sizing:border-box;
+}
+.wedding-gift-modal.is-open{
+    display:flex;
+}
+.wedding-gift-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(19,31,33,.58);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+}
+.wedding-gift-card{
+    position:relative;
+    z-index:2;
+    width:min(340px, calc(100vw - 44px));
+    max-height:calc(100dvh - 44px);
+    overflow:auto;
+    padding:28px 22px 22px;
+    box-sizing:border-box;
+    border-radius:22px;
+    background:#f6faf9;
+    color:#213739;
+    box-shadow:0 18px 55px rgba(0,0,0,.24);
+    text-align:center;
+    animation:giftCardIn .26s ease both;
+}
+@keyframes giftCardIn{
+    from{opacity:0; transform:translateY(12px) scale(.97)}
+    to{opacity:1; transform:none}
+}
+.wedding-gift-close{
+    position:absolute;
+    top:8px;
+    right:10px;
+    width:38px;
+    height:38px;
+    border:0;
+    background:transparent;
+    color:#526b6d;
+    font-size:30px;
+    line-height:38px;
+    cursor:pointer;
+}
+.wedding-gift-card-icon{
+    font-family:Georgia,serif;
+    font-size:32px;
+    line-height:1;
+    color:#6f8b8d;
+}
+.wedding-gift-card-title{
+    margin-top:6px;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:22px;
+    line-height:1.25;
+    font-weight:600;
+}
+.wedding-gift-recipient{
+    margin-top:4px;
+    font-size:14px;
+    color:#667d7f;
+}
+.wedding-gift-qr{
+    display:none;
+    width:174px;
+    height:174px;
+    object-fit:contain;
+    margin:18px auto 5px;
+    border-radius:14px;
+    background:#fff;
+    padding:7px;
+    box-sizing:border-box;
+}
+.wedding-gift-qr.has-qr{
+    display:block;
+}
+.wedding-gift-bank-box{
+    margin-top:18px;
+    padding:4px 14px;
+    border:1px solid rgba(103,127,125,.28);
+    border-radius:14px;
+    background:#fff;
+}
+.gift-info-row{
+    min-height:47px;
+    padding:9px 0;
+    border-bottom:1px dashed rgba(103,127,125,.25);
+    box-sizing:border-box;
+    text-align:left;
+}
+.gift-info-row:last-child{
+    border-bottom:0;
+}
+.gift-info-row span{
+    display:block;
+    font-size:11px;
+    color:#829293;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+.gift-info-row strong{
+    display:block;
+    margin-top:3px;
+    font-size:15px;
+    line-height:1.25;
+    word-break:break-word;
+}
+.gift-account-row strong{
+    font-size:20px;
+    letter-spacing:1px;
+}
+.wedding-gift-copy-button{
+    width:100%;
+    min-height:44px;
+    margin-top:15px;
+    border:0;
+    border-radius:22px;
+    background:#677f7d;
+    color:white;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    touch-action:manipulation;
+}
+.wedding-gift-copy-button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+.wedding-gift-copy-status{
+    min-height:18px;
+    margin-top:7px;
+    font-size:12px;
+    color:#677f7d;
+}
+
+/* Preserve fixed Ladi 420px composition on mobile. */
+@media(max-width:360px){
+    .wedding-gift-button{
+        font-size:11.5px;
+    }
+}
+@media(prefers-reduced-motion:reduce){
+    .wedding-gift-card{
+        animation:none !important;
+    }
 }
 </style>
 
@@ -1272,6 +1513,23 @@ input, textarea, select{
                         </div>
                     </div>
                 </div>
+                <!-- GIFT_ACTIONS_V14_START -->
+                <div id="WEDDING_GIFT_ACTIONS" class="wedding-gift-actions">
+                    <div class="wedding-gift-title">GỬI QUÀ MỪNG</div>
+                    <div class="wedding-gift-subtitle">Một chút yêu thương gửi đến cô dâu &amp; chú rể</div>
+                    <div class="wedding-gift-buttons">
+                        <button type="button" class="wedding-gift-button" data-gift-target="bride">
+                            <span class="gift-heart">♡</span>
+                            <span id="GIFT_BRIDE_BUTTON_TEXT">Gửi quà đến cô dâu</span>
+                        </button>
+                        <button type="button" class="wedding-gift-button" data-gift-target="groom">
+                            <span class="gift-heart">♡</span>
+                            <span id="GIFT_GROOM_BUTTON_TEXT">Gửi quà đến chú rể</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- GIFT_ACTIONS_V14_END -->
+
             </div>
         </div>
     </div>
@@ -1627,7 +1885,7 @@ input, textarea, select{
                 const value = params.get(key);
                 if(value) coverParams.set(key,value);
             }
-            coverParams.set("v", "20260810-1905-v13");
+            coverParams.set("v", "20260810-1918-v14");
             frame.src = "cover.html?" + coverParams.toString();
         }
     }
@@ -1654,6 +1912,188 @@ input, textarea, select{
             }
         }, 180);
     }, {passive:true});
+})();
+</script>
+
+
+<!-- GIFT_ACTIONS_V14_START -->
+<div id="WEDDING_GIFT_MODAL" class="wedding-gift-modal" aria-hidden="true">
+    <div class="wedding-gift-backdrop" data-gift-close></div>
+    <div class="wedding-gift-card" role="dialog" aria-modal="true" aria-labelledby="GIFT_MODAL_TITLE">
+        <button type="button" class="wedding-gift-close" aria-label="Đóng" data-gift-close>×</button>
+
+        <div class="wedding-gift-card-icon">♡</div>
+        <div id="GIFT_MODAL_TITLE" class="wedding-gift-card-title">Gửi quà mừng</div>
+        <div id="GIFT_MODAL_RECIPIENT" class="wedding-gift-recipient"></div>
+
+        <img id="GIFT_MODAL_QR" class="wedding-gift-qr" alt="Mã QR nhận quà mừng">
+
+        <div class="wedding-gift-bank-box">
+            <div class="gift-info-row">
+                <span>Ngân hàng</span>
+                <strong id="GIFT_MODAL_BANK">Chưa cập nhật</strong>
+            </div>
+            <div class="gift-info-row">
+                <span>Chủ tài khoản</span>
+                <strong id="GIFT_MODAL_OWNER">Chưa cập nhật</strong>
+            </div>
+            <div class="gift-info-row gift-account-row">
+                <span>Số tài khoản</span>
+                <strong id="GIFT_MODAL_ACCOUNT">Chưa cập nhật</strong>
+            </div>
+        </div>
+
+        <button type="button" id="GIFT_COPY_ACCOUNT" class="wedding-gift-copy-button">
+            Sao chép số tài khoản
+        </button>
+        <div id="GIFT_COPY_STATUS" class="wedding-gift-copy-status" aria-live="polite"></div>
+    </div>
+</div>
+<!-- GIFT_ACTIONS_V14_END -->
+
+
+<script id="wedding-gift-runtime-v14">
+(function(){
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+
+    function clean(value){
+        return String(value || "").trim();
+    }
+
+    function getGiftConfig(type){
+        const C = window.WEDDING_CONFIG || {};
+        const gifts = C.gifts || {};
+        return gifts[type] || {};
+    }
+
+    function getRecipientName(type){
+        const C = window.WEDDING_CONFIG || {};
+        const cp = C.couple || {};
+        return type === "bride"
+            ? (cp.bride || "Cô dâu")
+            : (cp.groom || "Chú rể");
+    }
+
+    function showValue(id, value){
+        const el = $(id);
+        if(el) el.textContent = clean(value) || "Chưa cập nhật";
+    }
+
+    function updateButtonText(){
+        const bride = getGiftConfig("bride");
+        const groom = getGiftConfig("groom");
+
+        if($("GIFT_BRIDE_BUTTON_TEXT")){
+            $("GIFT_BRIDE_BUTTON_TEXT").textContent =
+                clean(bride.buttonText) || "Gửi quà đến cô dâu";
+        }
+        if($("GIFT_GROOM_BUTTON_TEXT")){
+            $("GIFT_GROOM_BUTTON_TEXT").textContent =
+                clean(groom.buttonText) || "Gửi quà đến chú rể";
+        }
+    }
+
+    function openGift(type){
+        const modal = $("WEDDING_GIFT_MODAL");
+        if(!modal) return;
+
+        const cfg = getGiftConfig(type);
+        const recipient = getRecipientName(type);
+        const role = type === "bride" ? "CÔ DÂU" : "CHÚ RỂ";
+
+        $("GIFT_MODAL_TITLE").textContent = "Gửi quà đến " + (type === "bride" ? "cô dâu" : "chú rể");
+        $("GIFT_MODAL_RECIPIENT").textContent = role + " · " + recipient;
+
+        showValue("GIFT_MODAL_BANK", cfg.bankName);
+        showValue("GIFT_MODAL_OWNER", cfg.accountName || recipient);
+        showValue("GIFT_MODAL_ACCOUNT", cfg.accountNumber);
+
+        const qr = $("GIFT_MODAL_QR");
+        if(qr){
+            const qrSrc = clean(cfg.qrImage);
+            if(qrSrc){
+                qr.src = qrSrc;
+                qr.classList.add("has-qr");
+            }else{
+                qr.removeAttribute("src");
+                qr.classList.remove("has-qr");
+            }
+        }
+
+        const copy = $("GIFT_COPY_ACCOUNT");
+        if(copy){
+            copy.dataset.account = clean(cfg.accountNumber);
+            copy.disabled = !clean(cfg.accountNumber);
+        }
+
+        if($("GIFT_COPY_STATUS")) $("GIFT_COPY_STATUS").textContent = "";
+
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden","false");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeGift(){
+        const modal = $("WEDDING_GIFT_MODAL");
+        if(!modal) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden","true");
+        document.body.style.overflow = "";
+    }
+
+    async function copyAccount(){
+        const btn = $("GIFT_COPY_ACCOUNT");
+        const status = $("GIFT_COPY_STATUS");
+        const account = btn ? clean(btn.dataset.account) : "";
+        if(!account) return;
+
+        try{
+            if(navigator.clipboard && window.isSecureContext){
+                await navigator.clipboard.writeText(account);
+            }else{
+                const ta = document.createElement("textarea");
+                ta.value = account;
+                ta.style.position = "fixed";
+                ta.style.opacity = "0";
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                ta.remove();
+            }
+            if(status) status.textContent = "Đã sao chép số tài khoản";
+        }catch(e){
+            if(status) status.textContent = "Không thể tự sao chép. Vui lòng nhấn giữ số tài khoản.";
+        }
+    }
+
+    function initGift(){
+        updateButtonText();
+
+        document.querySelectorAll("[data-gift-target]").forEach(function(btn){
+            btn.addEventListener("click", function(){
+                openGift(btn.getAttribute("data-gift-target"));
+            });
+        });
+
+        document.querySelectorAll("[data-gift-close]").forEach(function(el){
+            el.addEventListener("click", closeGift);
+        });
+
+        const copy = $("GIFT_COPY_ACCOUNT");
+        if(copy) copy.addEventListener("click", copyAccount);
+
+        document.addEventListener("keydown", function(e){
+            if(e.key === "Escape") closeGift();
+        });
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", initGift, {once:true});
+    }else{
+        initGift();
+    }
 })();
 </script>
 

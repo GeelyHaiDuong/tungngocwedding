@@ -7,6 +7,7 @@
 */
 
 window.WEDDING_CONFIG = {
+
   guest: {
     defaultName: "Quý khách",
     queryKeys: ["guest", "khach", "to"]
@@ -19,11 +20,9 @@ window.WEDDING_CONFIG = {
     brideInitials: "BN"
   },
 
-  cover: {
-    // Chữ giữa bìa passport. Có thể đổi thành "TN", "HT", "BN"...
-    monogram: "TN",
 
-    // Tài nguyên cover Gemini
+  cover: {
+    monogram: "TN",
     background: "https://w.ladicdn.com/s750x1200/691804d3a89f3900120ca482/bg5-20260723093909-sw6oc.jpg",
     andImage: "https://w.ladicdn.com/s450x350/691804d3a89f3900120ca482/and-20260721145856-qn4u1.png",
     passportImage: "https://w.ladicdn.com/s600x650/691804d3a89f3900120ca482/2-20260723094152-hrck4.png",
@@ -43,6 +42,30 @@ window.WEDDING_CONFIG = {
   family: {
     groomParents: "",
     brideParents: ""
+  },
+
+  /*
+  ========================================================
+   QUÀ MỪNG — CHỈ CẦN SỬA THÔNG TIN Ở ĐÂY
+   qrImage có thể để trống hoặc dùng:
+   "assets/images/qr-co-dau.jpg"
+  ========================================================
+  */
+  gifts: {
+    bride: {
+      buttonText: "Gửi quà đến cô dâu",
+      bankName: "",
+      accountNumber: "",
+      accountName: "",
+      qrImage: ""
+    },
+    groom: {
+      buttonText: "Gửi quà đến chú rể",
+      bankName: "",
+      accountNumber: "",
+      accountName: "",
+      qrImage: ""
+    }
   },
 
   invitation: {
