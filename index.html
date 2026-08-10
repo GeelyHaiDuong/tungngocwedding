@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="cover-shell-version" content="20260810-1554-v9">
     <!-- GitHub-ready: chỉnh thông tin trong config.js -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Hoàng Tùng &amp; Bích Ngọc | Wedding Invitation 27.09.2026</title>
@@ -548,6 +549,41 @@ html.cover-shell-lock, body.cover-shell-lock{
     height:100%;
     border:0;
     background:#edf5f6;
+}
+</style>
+
+
+<style id="main-invitation-transition-v2">
+#wedding-cover-shell{
+    transition:opacity .48s ease !important, transform .48s cubic-bezier(.2,.75,.25,1) !important;
+    transform:scale(1);
+    transform-origin:center center;
+}
+#wedding-cover-shell.is-closing{
+    opacity:0 !important;
+    transform:scale(1.025);
+    pointer-events:none;
+}
+
+@keyframes invitationPageEnter{
+    from{
+        opacity:.12;
+        transform:translate3d(0,20px,0) scale(.975);
+        filter:blur(4px);
+    }
+    to{
+        opacity:1;
+        transform:translate3d(0,0,0) scale(1);
+        filter:blur(0);
+    }
+}
+body.invitation-enter #SECTION5{
+    animation:invitationPageEnter .78s cubic-bezier(.18,.8,.22,1) both !important;
+    transform-origin:center top;
+}
+@media(prefers-reduced-motion:reduce){
+    #wedding-cover-shell{transition:none !important}
+    body.invitation-enter #SECTION5{animation:none !important}
 }
 </style>
 
@@ -1522,18 +1558,22 @@ html.cover-shell-lock, body.cover-shell-lock{
 
     function closeCover(){
         if(!shell) return;
+
+        // Start the invitation underneath at the same moment the iframe cover fades.
+        document.body.classList.add("invitation-enter");
         shell.classList.add("is-closing");
 
-        // The click occurred inside the iframe but the message arrives immediately.
-        // Trigger a harmless user-like event so the existing music logic can react
-        // once the main invitation becomes visible.
         try{ document.dispatchEvent(new Event("touchstart",{bubbles:true})); }catch(e){}
 
         setTimeout(function(){
             shell.remove();
             unlock();
             window.scrollTo({top:0,behavior:"instant"});
-        },550);
+
+            setTimeout(function(){
+                document.body.classList.remove("invitation-enter");
+            },820);
+        },480);
     }
 
     if(params.get("open") === "1"){
@@ -1549,7 +1589,8 @@ html.cover-shell-lock, body.cover-shell-lock{
                 const value = params.get(key);
                 if(value) coverParams.set(key,value);
             }
-            frame.src = "cover.html" + (coverParams.toString() ? "?" + coverParams.toString() : "");
+            coverParams.set("v", "20260810-1554-v9");
+            frame.src = "cover.html?" + coverParams.toString();
         }
     }
 
