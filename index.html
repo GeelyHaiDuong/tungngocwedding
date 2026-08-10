@@ -477,6 +477,53 @@
 </style>
 
     <script src="config.js"></script>
+
+<style id="invitation_overlap_fix_v1">
+/*
+  FIX phần thiệp thông tin:
+  - Đưa đoạn lời mời lên cao hơn để không chạm khung ngày/giờ.
+  - Giữ 4 dòng rõ ràng, khoảng cách dòng gọn.
+  - Không thay đổi bố cục các section khác.
+*/
+#SECTION2 #HEADLINE9 {
+    top: 742px !important;
+    left: 35px !important;
+    width: 350px !important;
+}
+
+#SECTION2 #HEADLINE9 > .ladi-headline {
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+}
+
+/* Tạo khoảng thở rõ hơn cho khung ngày giờ */
+#SECTION2 #GROUP8 {
+    top: 834px !important;
+}
+
+/* Giữ phần địa điểm cách khung ngày giờ đủ thoáng */
+#SECTION2 #GROUP2 {
+    top: 934px !important;
+}
+
+/* Chỉ đường và khối gia đình dịch nhẹ theo phần địa điểm */
+#SECTION2 #GROUP7 {
+    top: 1057px !important;
+}
+
+#SECTION2 #GROUP38 {
+    top: 1155px !important;
+}
+
+/* Hạn chế text dài trong địa chỉ làm tràn */
+#SECTION2 #HEADLINE14 > .ladi-headline {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+}
+</style>
+
 </head>
 <body class="">
     <button id="music-toggle" type="button" aria-label="Bật nhạc" title="Bật nhạc" aria-pressed="false">

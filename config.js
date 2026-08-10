@@ -31,8 +31,9 @@ window.WEDDING_CONFIG = {
   invitation: {
     intro:
       "Có những cuộc gặp gỡ trở thành duyên,<br>" +
-      "có những yêu thương trở thành lời hẹn.<br>" +
-      "Trân trọng kính mời bạn đến chung vui cùng gia đình chúng tôi.<br>",
+      "Có những yêu thương trở thành lời hẹn.<br>" +
+      "Trân trọng kính mời bạn đến chung vui<br>" +
+      "cùng gia đình chúng tôi.<br>",
     welcome: "Hân hạnh được đón tiếp quý khách"
   },
 
