@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta name="cover-shell-version" content="20260810-1826-v12">
+    <meta name="cover-shell-version" content="20260810-1905-v13">
     <!-- GitHub-ready: chỉnh thông tin trong config.js -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Hoàng Tùng &amp; Bích Ngọc | Wedding Invitation 27.09.2026</title>
@@ -10,7 +10,8 @@
     <meta http-equiv="Expires" content="-1">
     <meta name="keywords" content="">
     <meta name="description" content="Thiệp cưới Hoàng Tùng &amp; Bích Ngọc - 27.09.2026">
-<script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <script type="text/javascript">
         window.ladi_viewport=function(b){var a=document;b=b?b:'innerWidth';var c=window[b];var d=true;if(typeof window.ladi_is_desktop=="undefined"||window.ladi_is_desktop==undefined){window.ladi_is_desktop=!d;}var e=960;var f=420;var g='';if(!d){g="width="+e+",user-scalable=no,initial-scale=1.0";}else{var h=1;var i=f;if(i!=c){h=c / i;}g="width="+i+",user-scalable=no,initial-scale="+h+",minimum-scale="+h+",maximum-scale="+h;}var j=a.getElementById("viewport");if(!j){j=a.createElement("meta");j.id="viewport";j.name="viewport";a.head.appendChild(j);}j.setAttribute("content",g);};
         window.ladi_viewport();
         window.ladi_fbq_data = [];
@@ -586,51 +587,38 @@ body.invitation-enter #SECTION5{
 </style>
 
 
-<style id="mobile-stability-v12">
-html,body{
+<style id="mobile-stability-v13">
+html, body{
     margin:0 !important;
     padding:0 !important;
     overflow-x:hidden !important;
-    overscroll-behavior-x:none;
     -webkit-text-size-adjust:100%;
     text-size-adjust:100%;
+    overscroll-behavior-x:none;
 }
-.ladi-wraper{
-    width:420px !important;
-    min-width:420px !important;
-    max-width:420px !important;
-    margin-left:auto !important;
-    margin-right:auto !important;
-    overflow:hidden !important;
-}
-.ladi-section,
-.ladi-container{
-    width:420px !important;
-    max-width:420px !important;
-    margin-left:auto !important;
-    margin-right:auto !important;
-}
-.ladi-headline,
-.ladi-form-control,
-button,input,textarea,select{
-    max-width:100%;
-    box-sizing:border-box;
-}
-input,textarea,select{
-    font-size:16px !important;
-}
+
 #wedding-cover-shell{
-    width:100vw !important;
+    position:fixed !important;
+    inset:0 !important;
+    width:100% !important;
     height:100vh !important;
     height:100dvh !important;
     overflow:hidden !important;
 }
+
 #wedding-cover-frame{
     display:block !important;
     width:100% !important;
     height:100% !important;
     border:0 !important;
 }
+
+/* Prevent iOS from zooming when the RSVP fields receive focus. */
+input, textarea, select{
+    font-size:16px !important;
+}
+
+/* Safer floating control placement on notched iPhones. */
 #music-toggle{
     right:max(16px, env(safe-area-inset-right)) !important;
     bottom:max(16px, env(safe-area-inset-bottom)) !important;
@@ -1639,7 +1627,7 @@ input,textarea,select{
                 const value = params.get(key);
                 if(value) coverParams.set(key,value);
             }
-            coverParams.set("v", "20260810-1826-v12");
+            coverParams.set("v", "20260810-1905-v13");
             frame.src = "cover.html?" + coverParams.toString();
         }
     }
@@ -1653,32 +1641,18 @@ input,textarea,select{
 </script>
 
 
-<script id="mobile-viewport-runtime-v12">
+<script id="orientation-safe-v13">
 (function(){
     "use strict";
-    let lastWidth = window.innerWidth;
-
-    function refreshLadiViewport(){
-        if(typeof window.ladi_viewport === "function"){
-            window.ladi_viewport("innerWidth");
-        }
-    }
+    let lastOrientation = (screen.orientation && screen.orientation.type) || "";
 
     window.addEventListener("orientationchange", function(){
-        setTimeout(refreshLadiViewport,120);
-        setTimeout(refreshLadiViewport,420);
-    }, {passive:true});
-
-    window.addEventListener("resize", function(){
-        const w=window.innerWidth;
-        if(Math.abs(w-lastWidth)>=20){
-            lastWidth=w;
-            setTimeout(refreshLadiViewport,80);
-        }
-    }, {passive:true});
-
-    window.addEventListener("pageshow", function(){
-        setTimeout(refreshLadiViewport,30);
+        window.setTimeout(function(){
+            const now = (screen.orientation && screen.orientation.type) || "";
+            if(!lastOrientation || !now || now !== lastOrientation){
+                window.location.reload();
+            }
+        }, 180);
     }, {passive:true});
 })();
 </script>
