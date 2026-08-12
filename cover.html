@@ -196,7 +196,7 @@
             animation: fadeIn 1s ease forwards;
         }
     </style>
-    <script src="config.js"></script>
+    <script>document.write('<script src="config.js?v='+Date.now()+'"><\/script>');</script>
 
 <style id="cover-fix-patch">
     html, body { min-height: 100%; }
@@ -1143,7 +1143,7 @@ html, body{
         </svg>
 
         <!-- Cleaner airplane silhouette at route origin -->
-        <div class="flight-plane-v7" aria-hidden="true"><img src="assets/images/plane-cover.png?v=20260810-1905-v13" alt=""></div>
+        <div class="flight-plane-v7" aria-hidden="true"><img id="coverRoutePlane" src="assets/images/plane-cover.png" alt=""></div>
 
 <!-- Tên Cô dâu & Chú rể -->
         <div class="couple-names fade-in" style="animation-delay: 0.2s;">
@@ -1231,6 +1231,7 @@ html, body{
 
     if($("coverAnd") && $("coverAnd").tagName === "IMG" && cv.andImage) $("coverAnd").src = cv.andImage;
     if($("coverPlane") && cv.planeImage) $("coverPlane").src = cv.planeImage;
+    if($("coverRoutePlane") && cv.routePlaneImage) $("coverRoutePlane").src = cv.routePlaneImage;
     if($("coverStamp") && cv.stampImage) $("coverStamp").src = cv.stampImage;
 
     const passport = document.querySelector(".passport-cover");

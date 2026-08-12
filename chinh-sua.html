@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chỉnh sửa thiệp cưới</title>
+<script>document.write('<script src="config.js?v='+Date.now()+'"><\/script>');</script>
+<style>
+:root{
+  --bg:#eef4f4; --card:#fff; --ink:#233738; --muted:#718789;
+  --line:#d9e3e3; --brand:#647f80; --brand2:#4d696b; --soft:#f7faf9;
+  --ok:#3f6c50; --warn:#a96a34; --danger:#a55151;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.app{width:min(980px,100%);margin:0 auto;padding:18px 12px 110px}
+.hero{
+  padding:22px 20px;border-radius:20px;color:#fff;
+  background:linear-gradient(135deg,#597879,#91a7a7);
+  box-shadow:0 12px 35px rgba(44,67,69,.14)
+}
+.hero h1{margin:0;font:600 26px/1.2 Georgia,"Times New Roman",serif}
+.hero p{margin:8px 0 0;font-size:13px;line-height:1.55;opacity:.94}
+.notice{
+  margin-top:12px;padding:11px 13px;border-radius:11px;
+  background:#fff8dc;border:1px solid #eadf9b;font-size:12px;line-height:1.5
+}
+.tabs{
+  position:sticky;top:0;z-index:20;display:flex;gap:7px;overflow:auto;
+  margin:12px -3px 0;padding:8px 3px;background:rgba(238,244,244,.94);
+  backdrop-filter:blur(9px);scrollbar-width:none
+}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{
+  flex:none;text-decoration:none;color:var(--brand2);background:#fff;
+  border:1px solid var(--line);border-radius:999px;padding:9px 12px;
+  font-size:12px;font-weight:750;white-space:nowrap
+}
+.section{
+  margin-top:13px;padding:17px;background:var(--card);
+  border:1px solid var(--line);border-radius:17px;
+  box-shadow:0 4px 16px rgba(48,74,75,.045)
+}
+.section h2{margin:0 0 4px;font:600 19px/1.25 Georgia,"Times New Roman",serif}
+.section-note{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+label{font-size:12px;font-weight:750;color:#536b6d}
+input,textarea{
+  width:100%;border:1px solid var(--line);background:var(--soft);
+  color:var(--ink);border-radius:10px;padding:10px 11px;
+  font:inherit;font-size:14px;outline:none
+}
+input:focus,textarea:focus{border-color:#8aa4a5;background:#fff;box-shadow:0 0 0 3px rgba(100,127,128,.11)}
+textarea{min-height:86px;resize:vertical;line-height:1.5}
+.story-card{
+  margin-top:10px;padding:13px;border-radius:13px;
+  border:1px solid var(--line);background:#fbfdfc
+}
+.story-card h3{margin:0 0 11px;color:var(--brand2);font-size:14px}
+.image-group{
+  margin-top:11px;border:1px solid var(--line);border-radius:14px;
+  background:#fbfdfc;overflow:hidden
+}
+.image-group summary{
+  cursor:pointer;padding:13px 14px;font-size:14px;font-weight:800;
+  color:var(--brand2);background:#f5f9f8
+}
+.image-group[open] summary{border-bottom:1px solid var(--line)}
+.image-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:12px
+}
+.image-card{
+  min-width:0;border:1px solid #dde6e6;border-radius:12px;
+  background:#fff;padding:10px
+}
+.image-preview-wrap{
+  position:relative;width:100%;height:132px;border-radius:9px;
+  overflow:hidden;background:
+    linear-gradient(45deg,#edf1f1 25%,transparent 25%),
+    linear-gradient(-45deg,#edf1f1 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#edf1f1 75%),
+    linear-gradient(-45deg,transparent 75%,#edf1f1 75%);
+  background-size:18px 18px;background-position:0 0,0 9px,9px -9px,-9px 0;
+  display:flex;align-items:center;justify-content:center
+}
+.image-preview{
+  width:100%;height:100%;object-fit:contain;display:none;background:#f6f9f8
+}
+.image-preview.is-visible{display:block}
+.image-placeholder{font-size:11px;color:#91a0a1;text-align:center;padding:8px}
+.image-preview.is-visible + .image-placeholder{display:none}
+.image-title{margin:8px 0 5px;font-size:12px;font-weight:800;color:#496264}
+.image-ratio{font-size:10.5px;color:#879798;margin-bottom:6px}
+.image-path{font-size:12px;padding:9px 9px}
+.image-error{
+  display:none;margin-top:5px;color:var(--danger);font-size:10.5px;line-height:1.3
+}
+.image-error.show{display:block}
+.image-tools{display:flex;gap:6px;margin-top:7px}
+.mini-btn{
+  min-height:32px;border:0;border-radius:8px;padding:6px 9px;
+  cursor:pointer;font-size:11px;font-weight:750;background:#e8efef;color:#486264
+}
+.mini-btn.open{background:#edf3eb;color:#4f6b55}
+.actions{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  padding:9px max(11px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(11px,env(safe-area-inset-left));
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line)
+}
+.actions-inner{
+  width:min(980px,100%);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:7px
+}
+button.main{
+  min-height:44px;border:0;border-radius:12px;padding:9px 11px;
+  cursor:pointer;font-weight:800;font-size:12.5px
+}
+.secondary{background:#e5eded;color:#405b5d}
+.preview-btn{background:#dae8e6;color:#335658}
+.primary{background:var(--brand);color:#fff}
+.small-actions{display:flex;gap:7px;flex-wrap:wrap}
+.status{
+  display:none;margin-top:10px;padding:9px 11px;border-radius:9px;
+  background:#e8f4eb;color:#42634b;font-size:12px
+}
+.help{
+  margin-top:11px;padding:10px;border:1px dashed var(--line);
+  border-radius:10px;background:#f8fbfa;font-size:11.5px;line-height:1.55
+}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+@media(max-width:650px){
+  .app{padding:10px 9px 112px}
+  .hero{padding:18px 15px;border-radius:15px}
+  .grid,.image-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .section{padding:14px;border-radius:14px}
+  .actions-inner{grid-template-columns:1fr 1fr}
+  .actions-inner .primary{grid-column:1/-1}
+  .image-preview-wrap{height:170px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="hero">
+    <h1>Chỉnh sửa thiệp cưới</h1>
+    <p>Phiên bản V21: chỉnh nội dung + toàn bộ các nhóm ảnh đang dùng trên website. Mỗi ô ảnh có thumbnail xem trước ngay khi nhập đường dẫn.</p>
+  </section>
+
+  <div class="notice">
+    Ảnh có thể dùng URL <b>https://...</b> hoặc đường dẫn trong GitHub như
+    <code>assets/images/family/family-01.jpg</code>. Thumbnail sẽ tự cập nhật.
+  </div>
+
+  <nav class="tabs">
+    <a href="#couple">Tên</a>
+    <a href="#event">Lễ cưới</a>
+    <a href="#invitation">Lời mời</a>
+    <a href="#story">Story</a>
+    <a href="#gift">Quà mừng</a>
+    <a href="#images">Tất cả ảnh</a>
+  </nav>
+
+  <section class="section" id="couple">
+    <h2>Cô dâu & chú rể</h2>
+    <div class="grid">
+      <div class="field"><label>Tên cô dâu</label><input id="bride"></div>
+      <div class="field"><label>Tên chú rể</label><input id="groom"></div>
+      <div class="field"><label>Viết tắt cô dâu</label><input id="brideInitials"></div>
+      <div class="field"><label>Viết tắt chú rể</label><input id="groomInitials"></div>
+      <div class="field"><label>Tên khách mặc định</label><input id="guestDefault"></div>
+      <div class="field"><label>Monogram Passport</label><input id="monogram"></div>
+      <div class="field full"><label>Bố mẹ nhà gái</label><input id="brideParents"></div>
+      <div class="field full"><label>Bố mẹ nhà trai</label><input id="groomParents"></div>
+    </div>
+  </section>
+
+  <section class="section" id="event">
+    <h2>Thông tin lễ cưới</h2>
+    <div class="grid">
+      <div class="field"><label>Ngày cưới</label><input id="eventDate" type="date"></div>
+      <div class="field"><label>Giờ đón khách</label><input id="receptionTime" type="time"></div>
+      <div class="field"><label>Giờ khai tiệc</label><input id="ceremonyTime" type="time"></div>
+      <div class="field"><label>Tên địa điểm</label><input id="venueName"></div>
+      <div class="field full"><label>Địa chỉ</label><input id="address"></div>
+      <div class="field full"><label>Từ khóa Google Maps</label><input id="mapQuery"></div>
+    </div>
+  </section>
+
+  <section class="section" id="invitation">
+    <h2>Lời mời</h2>
+    <div class="grid">
+      <div class="field full"><label>Nội dung lời mời</label><textarea id="invitationIntro"></textarea></div>
+      <div class="field full"><label>Dòng đón tiếp</label><input id="invitationWelcome"></div>
+      <div class="field full"><label>Caption album</label><textarea id="albumCaption"></textarea></div>
+    </div>
+  </section>
+
+  <section class="section" id="story">
+    <h2>Story of Love</h2>
+    <p class="section-note">Thiệp hiện có 3 mốc Story.</p>
+    <div id="storyEditor"></div>
+  </section>
+
+  <section class="section" id="gift">
+    <h2>Quà mừng</h2>
+    <div class="story-card">
+      <h3>Cô dâu</h3>
+      <div class="grid">
+        <div class="field"><label>Ngân hàng</label><input id="brideBank"></div>
+        <div class="field"><label>Số tài khoản</label><input id="brideAccount"></div>
+        <div class="field full"><label>Chủ tài khoản</label><input id="brideAccountName"></div>
+      </div>
+    </div>
+    <div class="story-card">
+      <h3>Chú rể</h3>
+      <div class="grid">
+        <div class="field"><label>Ngân hàng</label><input id="groomBank"></div>
+        <div class="field"><label>Số tài khoản</label><input id="groomAccount"></div>
+        <div class="field full"><label>Chủ tài khoản</label><input id="groomAccountName"></div>
+      </div>
+    </div>
+    <p class="section-note" style="margin-top:11px">Ảnh QR cô dâu/chú rể nằm trong mục <b>Tất cả ảnh</b> bên dưới và có thumbnail.</p>
+  </section>
+
+  <section class="section" id="images">
+    <h2>Tất cả ảnh có thể thay</h2>
+    <p class="section-note">Các nhóm được thu gọn để dễ thao tác. Bấm tên nhóm để mở.</p>
+    <div id="imageEditor"></div>
+    <div class="help">
+      Ví dụ: nếu đã upload ảnh cô dâu vào <code>assets/images/couple/bride.jpg</code>,
+      chỉ cần nhập đúng đường dẫn đó. Nếu thumbnail hiện đúng thì đường dẫn đã hợp lệ.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Công cụ</h2>
+    <div class="small-actions">
+      <button class="main secondary" id="resetBtn" type="button">Khôi phục config.js</button>
+      <button class="main secondary" id="clearPreviewBtn" type="button">Xóa bản xem trước</button>
+    </div>
+    <div id="status" class="status"></div>
+  </section>
+</div>
+
+<div class="actions">
+  <div class="actions-inner">
+    <button class="main secondary" id="saveDraftBtn" type="button">Lưu tạm</button>
+    <button class="main preview-btn" id="previewBtn" type="button">Xem trước web</button>
+    <button class="main primary" id="exportBtn" type="button">Tải config.js</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const STORAGE_KEY="WEDDING_CONFIG_PREVIEW_V1";
+const BASE=JSON.parse(JSON.stringify(window.WEDDING_CONFIG||{}));
+const $=id=>document.getElementById(id);
+
+const IMAGE_GROUPS=[
+  {
+    title:"Cover / Passport",
+    open:true,
+    items:[
+      {path:"cover.background",label:"Nền Cover",ratio:"Khuyến nghị 420×862 hoặc cùng tỷ lệ dọc"},
+      {path:"cover.passportImage",label:"Ảnh Passport",ratio:"Ảnh bìa Passport"},
+      {path:"cover.planeImage",label:"Máy bay nhỏ trên Boarding Pass",ratio:"PNG nền trong suốt"},
+      {path:"cover.routePlaneImage",label:"Máy bay Flight Route",ratio:"PNG nền trong suốt"},
+      {path:"cover.stampImage",label:"Con dấu Passport",ratio:"PNG nền trong suốt"}
+    ]
+  },
+  {
+    title:"Hero đầu thiệp — 7 ảnh",
+    items:Array.from({length:7},(_,i)=>({path:`images.hero[${i}]`,label:`Hero ${i+1}`,ratio:"Ảnh vuông / ảnh theo gallery gốc"}))
+  },
+  {
+    title:"Thiệp mời / Wedding Ticket — 3 ảnh",
+    items:Array.from({length:3},(_,i)=>({path:`images.invitation[${i}]`,label:`Ảnh thiệp mời ${i+1}`,ratio:"Giữ tỷ lệ gần ảnh gốc"}))
+  },
+  {
+    title:"Story of Love",
+    items:[{path:"images.story",label:"Ảnh Story chính",ratio:"Ảnh ngang"}]
+  },
+  {
+    title:"Family — ảnh lớn + film dọc",
+    open:true,
+    items:[
+      {path:"images.familyMain",label:"Family ảnh lớn bên phải",ratio:"Ảnh dọc"},
+      ...Array.from({length:7},(_,i)=>({path:`images.familyFilm[${i}]`,label:`Family film ${i+1}`,ratio:"Khuyến nghị 1416×1000"}))
+    ]
+  },
+  {
+    title:"Cô dâu & chú rể",
+    open:true,
+    items:[
+      {path:"images.groomPortrait",label:"Ảnh chú rể",ratio:"Khuyến nghị khoảng 5:7"},
+      {path:"images.bridePortrait",label:"Ảnh cô dâu",ratio:"Khuyến nghị khoảng 5:7"}
+    ]
+  },
+  {
+    title:"Flight — 2 ảnh",
+    items:Array.from({length:2},(_,i)=>({path:`images.flight[${i}]`,label:`Flight ${i+1}`,ratio:"Ảnh dọc"}))
+  },
+  {
+    title:"Album Cover — 3 ảnh",
+    items:Array.from({length:3},(_,i)=>({path:`images.albumCover[${i}]`,label:`Album Cover ${i+1}`,ratio:"Ảnh dọc"}))
+  },
+  {
+    title:"Album Gallery — 18 ảnh",
+    items:Array.from({length:18},(_,i)=>({path:`images.album[${i}]`,label:`Album ${i+1}`,ratio:"Ảnh dọc / theo gallery gốc"}))
+  },
+  {
+    title:"Footer",
+    items:[{path:"images.footer",label:"Ảnh cuối trang",ratio:"Ảnh ngang"}]
+  },
+  {
+    title:"QR quà mừng",
+    items:[
+      {path:"gifts.bride.qrImage",label:"QR cô dâu",ratio:"Ảnh vuông"},
+      {path:"gifts.groom.qrImage",label:"QR chú rể",ratio:"Ảnh vuông"}
+    ]
+  }
+];
+
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function val(id){return ($(id)?.value||"").trim()}
+function setInput(id,v){if($(id))$(id).value=v==null?"":String(v)}
+function htmlToText(s){return String(s||"").replace(/<br\s*\/?>/gi,"\n").replace(/&amp;/g,"&").replace(/&nbsp;/g," ")}
+function textToHtml(s){return String(s||"").replace(/\r\n|\r|\n/g,"<br>")}
+
+function ensure(c){
+  c.guest||={}; c.couple||={}; c.cover||={}; c.event||={}; c.family||={};
+  c.invitation||={}; c.story||=[{},{},{}]; while(c.story.length<3)c.story.push({});
+  c.gifts||={}; c.gifts.bride||={}; c.gifts.groom||={}; c.images||={};
+  c.images.hero||=[]; c.images.invitation||=[]; c.images.familyFilm||=[];
+  c.images.flight||=[]; c.images.albumCover||=[]; c.images.album||=[];
+  return c;
+}
+
+function pathTokens(path){
+  return path.replace(/\[(\d+)\]/g,".$1").split(".");
+}
+function getPath(obj,path){
+  return pathTokens(path).reduce((acc,k)=>acc==null?undefined:acc[k],obj);
+}
+function setPath(obj,path,value){
+  const t=pathTokens(path);
+  let cur=obj;
+  t.forEach((k,i)=>{
+    if(i===t.length-1){cur[k]=value;return}
+    const next=t[i+1];
+    if(cur[k]==null)cur[k]=/^\d+$/.test(next)?[]:{};
+    cur=cur[k];
+  });
+}
+
+function previewUrl(src){
+  src=String(src||"").trim();
+  if(!src)return "";
+  try{
+    const u=new URL(src,document.baseURI);
+    if(u.origin===location.origin)u.searchParams.set("_thumb",Date.now().toString(36));
+    return u.href;
+  }catch(e){return src}
+}
+
+function updateThumb(card,src){
+  const img=card.querySelector(".image-preview");
+  const err=card.querySelector(".image-error");
+  src=String(src||"").trim();
+  err.classList.remove("show");
+  if(!src){
+    img.removeAttribute("src"); img.classList.remove("is-visible"); return;
+  }
+  img.onload=()=>{img.classList.add("is-visible");err.classList.remove("show")};
+  img.onerror=()=>{img.classList.remove("is-visible");err.classList.add("show")};
+  img.src=previewUrl(src);
+}
+
+function renderImageEditor(c){
+  const root=$("imageEditor");
+  root.innerHTML="";
+  IMAGE_GROUPS.forEach((group,gi)=>{
+    const details=document.createElement("details");
+    details.className="image-group";
+    if(group.open)details.open=true;
+
+    const summary=document.createElement("summary");
+    summary.textContent=group.title;
+    details.appendChild(summary);
+
+    const grid=document.createElement("div");
+    grid.className="image-grid";
+
+    group.items.forEach(item=>{
+      const card=document.createElement("div");
+      card.className="image-card";
+      card.innerHTML=`
+        <div class="image-preview-wrap">
+          <img class="image-preview" alt="">
+          <div class="image-placeholder">Chưa có thumbnail</div>
+        </div>
+        <div class="image-title"></div>
+        <div class="image-ratio"></div>
+        <input class="image-path" data-image-path="" autocomplete="off">
+        <div class="image-error">Không tải được ảnh. Kiểm tra tên file / đường dẫn.</div>
+        <div class="image-tools">
+          <button type="button" class="mini-btn open">Mở ảnh</button>
+          <button type="button" class="mini-btn clear">Xóa ô</button>
+        </div>`;
+      card.querySelector(".image-title").textContent=item.label;
+      card.querySelector(".image-ratio").textContent=item.ratio||"";
+      const input=card.querySelector(".image-path");
+      input.dataset.imagePath=item.path;
+      input.value=getPath(c,item.path)||"";
+      input.addEventListener("input",()=>updateThumb(card,input.value));
+      input.addEventListener("change",()=>updateThumb(card,input.value));
+      card.querySelector(".open").addEventListener("click",()=>{
+        const src=input.value.trim();
+        if(src)window.open(previewUrl(src),"_blank");
+      });
+      card.querySelector(".clear").addEventListener("click",()=>{
+        input.value=""; updateThumb(card,"");
+      });
+      grid.appendChild(card);
+      setTimeout(()=>updateThumb(card,input.value),20);
+    });
+
+    details.appendChild(grid);
+    root.appendChild(details);
+  });
+}
+
+function renderStories(c){
+  const root=$("storyEditor");
+  root.innerHTML="";
+  for(let i=0;i<3;i++){
+    const s=c.story[i]||{};
+    const card=document.createElement("div");
+    card.className="story-card";
+    card.innerHTML=`
+      <h3>Mốc Story ${i+1}</h3>
+      <div class="field"><label>Tiêu đề</label><input id="story${i+1}Title"></div>
+      <div class="field" style="margin-top:9px"><label>Nội dung</label><textarea id="story${i+1}Text"></textarea></div>`;
+    root.appendChild(card);
+    setInput(`story${i+1}Title`,s.title);
+    setInput(`story${i+1}Text`,s.text);
+  }
+}
+
+function fill(c){
+  c=ensure(clone(c));
+  setInput("bride",c.couple.bride); setInput("groom",c.couple.groom);
+  setInput("brideInitials",c.couple.brideInitials); setInput("groomInitials",c.couple.groomInitials);
+  setInput("guestDefault",c.guest.defaultName); setInput("monogram",c.cover.monogram);
+  setInput("brideParents",c.family.brideParents); setInput("groomParents",c.family.groomParents);
+
+  setInput("eventDate",c.event.date); setInput("receptionTime",c.event.receptionTime);
+  setInput("ceremonyTime",c.event.ceremonyTime); setInput("venueName",c.event.venueName);
+  setInput("address",c.event.address); setInput("mapQuery",c.event.mapQuery);
+
+  setInput("invitationIntro",htmlToText(c.invitation.intro));
+  setInput("invitationWelcome",c.invitation.welcome);
+  setInput("albumCaption",c.albumCaption);
+
+  setInput("brideBank",c.gifts.bride.bankName);
+  setInput("brideAccount",c.gifts.bride.accountNumber);
+  setInput("brideAccountName",c.gifts.bride.accountName);
+  setInput("groomBank",c.gifts.groom.bankName);
+  setInput("groomAccount",c.gifts.groom.accountNumber);
+  setInput("groomAccountName",c.gifts.groom.accountName);
+
+  renderStories(c);
+  renderImageEditor(c);
+}
+
+function collect(){
+  const c=ensure(clone(BASE));
+
+  c.couple.bride=val("bride"); c.couple.groom=val("groom");
+  c.couple.brideInitials=val("brideInitials"); c.couple.groomInitials=val("groomInitials");
+  c.guest.defaultName=val("guestDefault")||"Quý khách";
+  c.cover.monogram=val("monogram");
+  c.family.brideParents=val("brideParents"); c.family.groomParents=val("groomParents");
+
+  c.event.date=val("eventDate"); c.event.receptionTime=val("receptionTime");
+  c.event.ceremonyTime=val("ceremonyTime"); c.event.venueName=val("venueName");
+  c.event.address=val("address"); c.event.mapQuery=val("mapQuery");
+
+  c.invitation.intro=textToHtml(val("invitationIntro"));
+  c.invitation.welcome=val("invitationWelcome");
+  c.albumCaption=val("albumCaption");
+
+  c.story=[0,1,2].map(i=>({title:val(`story${i+1}Title`),text:val(`story${i+1}Text`)}));
+
+  c.gifts.bride.bankName=val("brideBank");
+  c.gifts.bride.accountNumber=val("brideAccount");
+  c.gifts.bride.accountName=val("brideAccountName");
+  c.gifts.groom.bankName=val("groomBank");
+  c.gifts.groom.accountNumber=val("groomAccount");
+  c.gifts.groom.accountName=val("groomAccountName");
+
+  document.querySelectorAll("[data-image-path]").forEach(input=>{
+    setPath(c,input.dataset.imagePath,input.value.trim());
+  });
+
+  return c;
+}
+
+function status(msg){
+  const el=$("status");el.textContent=msg;el.style.display="block";
+  clearTimeout(status.timer);status.timer=setTimeout(()=>el.style.display="none",3500)
+}
+
+function saveDraft(){
+  const c=collect();localStorage.setItem(STORAGE_KEY,JSON.stringify(c));return c
+}
+
+function preview(){
+  saveDraft();
+  const q=new URLSearchParams();
+  q.set("preview","1");q.set("_v",Date.now().toString(36));
+  const guest=new URLSearchParams(location.search).get("guest");
+  if(guest)q.set("guest",guest);
+  window.open("index.html?"+q.toString(),"_blank")
+}
+
+function exportConfig(){
+  const c=saveDraft();
+  const helper=`
+/*
+========================================================
+ PREVIEW OVERRIDE — dùng bởi chinh-sua.html
+========================================================
+*/
+(function () {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("preview") !== "1") return;
+    const raw = localStorage.getItem("WEDDING_CONFIG_PREVIEW_V1");
+    if (!raw) return;
+    const preview = JSON.parse(raw);
+    function isObject(v){return v && typeof v === "object" && !Array.isArray(v);}
+    function merge(target,source){
+      Object.keys(source||{}).forEach(function(key){
+        const sv=source[key];
+        if(Array.isArray(sv))target[key]=sv.slice();
+        else if(isObject(sv)){
+          if(!isObject(target[key]))target[key]={};
+          merge(target[key],sv);
+        }else target[key]=sv;
+      });
+      return target;
+    }
+    window.WEDDING_CONFIG=merge(window.WEDDING_CONFIG||{},preview||{});
+  } catch(e) {
+    console.warn("Không thể nạp dữ liệu xem trước:",e);
+  }
+})();`;
+
+  const file=`/*
+========================================================
+ WEDDING CONFIG — xuất từ chinh-sua.html V21
+========================================================
+*/
+window.WEDDING_CONFIG = ${JSON.stringify(c,null,2)};
+${helper}
+`;
+  const blob=new Blob([file],{type:"text/javascript;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="config.js";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  status("Đã tạo config.js mới.")
+}
+
+$("saveDraftBtn").addEventListener("click",()=>{saveDraft();status("Đã lưu tạm trên trình duyệt.")});
+$("previewBtn").addEventListener("click",preview);
+$("exportBtn").addEventListener("click",exportConfig);
+$("resetBtn").addEventListener("click",()=>{localStorage.removeItem(STORAGE_KEY);fill(BASE);status("Đã khôi phục dữ liệu từ config.js.")});
+$("clearPreviewBtn").addEventListener("click",()=>{localStorage.removeItem(STORAGE_KEY);status("Đã xóa bản xem trước.")});
+
+const saved=localStorage.getItem(STORAGE_KEY);
+if(saved){
+  try{fill(JSON.parse(saved))}catch(e){fill(BASE)}
+}else fill(BASE);
+
+})();
+</script>
+</body>
+</html>
