@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="stamp-fix-version" content="v23">
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -1104,6 +1105,33 @@ html, body{
 }
 </style>
 
+
+<style id="stamp-transparency-v23">
+/* =========================================================
+   V23 — Con dấu Passport
+   - ép nền ảnh trong suốt
+   - multiply giúp vùng trắng (nếu còn sót trong PNG) hòa vào
+     nền Passport thay vì hiện thành hình vuông trắng
+   ========================================================= */
+#coverStamp.stamp-paris{
+    background:transparent !important;
+    background-color:transparent !important;
+
+    /* Với con dấu line-art màu đen, multiply cho hiệu ứng đóng dấu
+       tự nhiên và loại bỏ cảm giác "tờ giấy trắng" quanh con dấu. */
+    mix-blend-mode:multiply !important;
+
+    /* Giữ alpha PNG nguyên vẹn */
+    opacity:1 !important;
+    isolation:auto !important;
+
+    /* Không cho CSS khác tạo khung/nền */
+    border:0 !important;
+    box-shadow:none !important;
+    outline:0 !important;
+}
+</style>
+
 </head>
 <body>
 <!-- COVER_BUILD:20260810-1905-v13 -->
@@ -1232,7 +1260,17 @@ html, body{
     if($("coverAnd") && $("coverAnd").tagName === "IMG" && cv.andImage) $("coverAnd").src = cv.andImage;
     if($("coverPlane") && cv.planeImage) $("coverPlane").src = cv.planeImage;
     if($("coverRoutePlane") && cv.routePlaneImage) $("coverRoutePlane").src = cv.routePlaneImage;
-    if($("coverStamp") && cv.stampImage) $("coverStamp").src = cv.stampImage;
+    if($("coverStamp") && cv.stampImage){
+        try{
+            const stampUrl = new URL(cv.stampImage, document.baseURI);
+            if(stampUrl.origin === location.origin){
+                stampUrl.searchParams.set("_stamp", Date.now().toString(36));
+            }
+            $("coverStamp").src = stampUrl.href;
+        }catch(e){
+            $("coverStamp").src = cv.stampImage;
+        }
+    }
 
     const passport = document.querySelector(".passport-cover");
     if(passport && cv.passportImage){
