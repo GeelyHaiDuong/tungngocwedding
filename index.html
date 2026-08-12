@@ -1292,6 +1292,52 @@ input, textarea, select{
 }
 </style>
 
+
+<style id="invitation-main-image-v29">
+/* =========================================================
+   V29 — Ảnh lớn đầu SECTION3 / Wedding Ticket
+   Thu nhỏ + bo góc giống ảnh mở đầu Story of Love.
+   ========================================================= */
+
+/* Ảnh lớn: từ gần full 420px xuống 385px, căn giữa */
+#SECTION3 #IMAGE24{
+    width:385px !important;
+    height:480px !important;
+    left:17.5px !important;
+    top:10px !important;
+}
+
+/* Khung ảnh bo tròn như IMAGE47 ở Story of Love */
+#SECTION3 #IMAGE24 > .ladi-image{
+    width:100% !important;
+    height:100% !important;
+    border-radius:16px !important;
+    overflow:hidden !important;
+}
+
+/* Reset crop/offset cũ của LadiPage.
+   Ảnh nguồn sẽ lấp đầy đúng khung 385×480. */
+#SECTION3 #IMAGE24 > .ladi-image > .ladi-image-background{
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+}
+
+/* Kéo phần Wedding Ticket/Calendar lên tương ứng để không tạo khoảng trống lớn */
+#SECTION3 #GROUP76{
+    top:500px !important;
+}
+
+/* Giảm chiều cao section theo phần ảnh đã thu nhỏ */
+#SECTION3{
+    height:1069px !important;
+}
+</style>
+
 </head>
 <body class="">
 
