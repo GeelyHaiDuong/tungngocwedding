@@ -235,13 +235,16 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <div id="imageEditor"></div>
     <div class="story-card">
       <h3>Thiết lập Barcode</h3>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px">
-        <input id="barcodeInvert" type="checkbox" style="width:auto">
-        Đảo màu barcode nền đen → nền trắng
-      </label>
+      <div class="field">
+        <label>Chế độ màu Barcode</label>
+        <select id="barcodeInvert" style="width:100%;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:10px;padding:10px 11px;font:inherit;font-size:14px">
+          <option value="auto">Tự động nhận diện nền trắng / nền đen</option>
+          <option value="false">Giữ nguyên màu ảnh</option>
+          <option value="true">Luôn đảo màu</option>
+        </select>
+      </div>
       <div class="section-note" style="margin-top:7px;margin-bottom:0">
-        Bật tùy chọn này nếu file barcode của anh đang là nền đen/vạch sáng.
-        Nếu đã dùng barcode nền trắng/vạch đen thì bỏ chọn.
+        Với barcode mới nền trắng/vạch đen, nên để <b>Tự động</b> hoặc <b>Giữ nguyên màu ảnh</b>.
       </div>
     </div>
     <div class="help">
@@ -492,7 +495,10 @@ function fill(c){
 
   renderStories(c);
   renderImageEditor(c);
-  if($("barcodeInvert")) $("barcodeInvert").checked = c.cover.barcodeInvert !== false;
+  if($("barcodeInvert")){
+    const m = c.cover.barcodeInvert;
+    $("barcodeInvert").value = (m === true) ? "true" : (m === false ? "false" : "auto");
+  }
 }
 
 function collect(){
@@ -502,7 +508,10 @@ function collect(){
   c.couple.brideInitials=val("brideInitials"); c.couple.groomInitials=val("groomInitials");
   c.guest.defaultName=val("guestDefault")||"Quý khách";
   c.cover.monogram=val("monogram");
-  c.cover.barcodeInvert = $("barcodeInvert") ? $("barcodeInvert").checked : true;
+  if($("barcodeInvert")){
+    const m = $("barcodeInvert").value;
+    c.cover.barcodeInvert = (m === "true") ? true : (m === "false" ? false : "auto");
+  }
   c.family.brideParents=val("brideParents"); c.family.groomParents=val("groomParents");
 
   c.event.date=val("eventDate"); c.event.receptionTime=val("receptionTime");
