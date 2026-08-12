@@ -29,7 +29,6 @@ window.WEDDING_CONFIG = {
     planeImage: "https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/mv-20260723092425-by2vu.png",
     routePlaneImage: "assets/images/plane-cover.png",
     barcodeImage: "",
-    barcodeInvert: "auto",
     stampImage: "https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/paris2-20260723105805-hasav.png"
   },
 

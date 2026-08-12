@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="barcode-raw-version" content="v27">
     <meta name="barcode-cover-version" content="v24">
     <meta name="stamp-fix-version" content="v23">
 
@@ -1135,34 +1136,20 @@ html, body{
 
 
 
-<style id="barcode-auto-v26">
-/* =========================================================
-   V26 — Barcode Auto Fix
-   - hiển thị ảnh barcode đúng màu gốc
-   - tự phát hiện ảnh nền đen để đảo màu khi cần
-   - barcode lớn hơn, gần kích thước mẫu mặc định ban đầu
-   ========================================================= */
 
+<style id="barcode-raw-v27">
+/* =========================================================
+   V27 — BARCODE RAW IMAGE
+   Không invert / không blend / không filter.
+   Hiển thị đúng màu của file barcode gốc.
+   ========================================================= */
 .ticket-barcode{
     display:flex !important;
     align-items:center !important;
     justify-content:center !important;
     background:#fff !important;
     overflow:hidden !important;
-}
-
-.ticket-barcode-image{
-    display:none;
-    width:152px !important;
-    max-width:94% !important;
-    height:54px !important;
-    object-fit:contain !important;
-    object-position:center center !important;
-    background:#fff !important;
-    mix-blend-mode:normal !important;
-    filter:none !important;
-    border:0 !important;
-    box-shadow:none !important;
+    padding:0 !important;
 }
 
 .ticket-barcode.has-custom-barcode::before,
@@ -1170,13 +1157,29 @@ html, body{
     display:none !important;
 }
 
-.ticket-barcode.has-custom-barcode .ticket-barcode-image{
-    display:block !important;
+.ticket-barcode-image{
+    display:none !important;
+    width:174px !important;
+    max-width:96% !important;
+    height:60px !important;
+    max-height:60px !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    background:#fff !important;
+
+    filter:none !important;
+    -webkit-filter:none !important;
+    mix-blend-mode:normal !important;
+    opacity:1 !important;
+
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    transform:none !important;
 }
 
-/* Chỉ áp dụng nếu code tự xác định file đang là âm bản */
-.ticket-barcode-image.barcode-invert{
-    filter:invert(1) grayscale(1) contrast(1.6) !important;
+.ticket-barcode.has-custom-barcode .ticket-barcode-image{
+    display:block !important;
 }
 </style>
 
@@ -1310,84 +1313,33 @@ html, body{
     if($("coverRoutePlane") && cv.routePlaneImage) $("coverRoutePlane").src = cv.routePlaneImage;
 
     
-    function applyBarcodeModeV26(img, mode){
-        if(!img) return;
-
-        // explicit manual modes still supported:
-        // true = always invert, false = never invert, "auto" = detect background
-        if(mode === true){
-            img.classList.add("barcode-invert");
-            return;
-        }
-        if(mode === false){
-            img.classList.remove("barcode-invert");
-            return;
-        }
-
-        // AUTO: sample the four corners. A normal barcode usually has
-        // a light/white background; a negative barcode has a dark background.
-        try{
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d", { willReadFrequently:true });
-            const w = Math.max(2, img.naturalWidth);
-            const h = Math.max(2, img.naturalHeight);
-            canvas.width = w;
-            canvas.height = h;
-            ctx.drawImage(img, 0, 0, w, h);
-
-            const pts = [
-                [2,2],
-                [Math.max(0,w-3),2],
-                [2,Math.max(0,h-3)],
-                [Math.max(0,w-3),Math.max(0,h-3)]
-            ];
-
-            let total = 0;
-            pts.forEach(([x,y]) => {
-                const d = ctx.getImageData(x,y,1,1).data;
-                total += (d[0] + d[1] + d[2]) / 3;
-            });
-
-            const avg = total / pts.length;
-
-            if(avg < 110){
-                img.classList.add("barcode-invert");
-            }else{
-                img.classList.remove("barcode-invert");
-            }
-        }catch(e){
-            // If canvas inspection is blocked (e.g. external cross-origin image),
-            // keep the image unchanged rather than wrongly inverting it.
-            img.classList.remove("barcode-invert");
-        }
-    }
-
     if($("coverBarcode") && $("coverBarcodeBox")){
         const barcodeSrc = String(cv.barcodeImage || "").trim();
+
+        // V27: luôn hiển thị màu gốc của file barcode.
+        $("coverBarcode").className = "ticket-barcode-image";
+        $("coverBarcode").style.filter = "none";
+        $("coverBarcode").style.webkitFilter = "none";
+        $("coverBarcode").style.mixBlendMode = "normal";
+        $("coverBarcode").style.opacity = "1";
+
         if(barcodeSrc){
             try{
                 const barcodeUrl = new URL(barcodeSrc, document.baseURI);
                 if(barcodeUrl.origin === location.origin){
                     barcodeUrl.searchParams.set("_barcode", Date.now().toString(36));
                 }
-                $("coverBarcode").onload = function(){
-                    applyBarcodeModeV26($("coverBarcode"), cv.barcodeInvert || "auto");
-                };
                 $("coverBarcode").src = barcodeUrl.href;
             }catch(e){
-                $("coverBarcode").onload = function(){
-                    applyBarcodeModeV26($("coverBarcode"), cv.barcodeInvert || "auto");
-                };
                 $("coverBarcode").src = barcodeSrc;
             }
             $("coverBarcodeBox").classList.add("has-custom-barcode");
         }else{
             $("coverBarcode").removeAttribute("src");
-            $("coverBarcode").classList.remove("barcode-invert");
-            $("coverBarcode").classList.remove("barcode-invert");
             $("coverBarcodeBox").classList.remove("has-custom-barcode");
         }
     }
+
     if($("coverStamp") && cv.stampImage){
         try{
             const stampUrl = new URL(cv.stampImage, document.baseURI);
