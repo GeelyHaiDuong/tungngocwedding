@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="barcode-cover-version" content="v24">
     <meta name="stamp-fix-version" content="v23">
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1132,6 +1133,31 @@ html, body{
 }
 </style>
 
+
+<style id="barcode-image-v24">
+/* =========================================================
+   V24 — barcode riêng, không còn dùng nhầm cover.planeImage
+   ========================================================= */
+.ticket-barcode-image{
+    display:none;
+    width:118px;
+    max-width:82%;
+    height:48px;
+    object-fit:contain;
+    object-position:center;
+    background:transparent;
+}
+
+.ticket-barcode.has-custom-barcode::before,
+.ticket-barcode.has-custom-barcode::after{
+    display:none !important;
+}
+
+.ticket-barcode.has-custom-barcode .ticket-barcode-image{
+    display:block !important;
+}
+</style>
+
 </head>
 <body>
 <!-- COVER_BUILD:20260810-1905-v13 -->
@@ -1187,7 +1213,7 @@ html, body{
         </div>
             <div class="invite-text">Trân trọng kính mời</div>
             <div id="coverGuest" class="guest-name">Quý khách</div>
-            <img id="coverPlane" class="plane-icon" src="https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/mv-20260723092425-by2vu.png" alt="Plane"><div class="ticket-barcode" aria-hidden="true"></div>
+            <img id="coverPlane" class="plane-icon" src="https://w.ladicdn.com/s400x400/691804d3a89f3900120ca482/mv-20260723092425-by2vu.png" alt="Plane"><div id="coverBarcodeBox" class="ticket-barcode" aria-hidden="true"><img id="coverBarcode" class="ticket-barcode-image" alt=""></div>
         </div>
 
         <!-- Bìa Passport bên ngoài (Click để mở thiệp) -->
@@ -1260,6 +1286,25 @@ html, body{
     if($("coverAnd") && $("coverAnd").tagName === "IMG" && cv.andImage) $("coverAnd").src = cv.andImage;
     if($("coverPlane") && cv.planeImage) $("coverPlane").src = cv.planeImage;
     if($("coverRoutePlane") && cv.routePlaneImage) $("coverRoutePlane").src = cv.routePlaneImage;
+
+    if($("coverBarcode") && $("coverBarcodeBox")){
+        const barcodeSrc = String(cv.barcodeImage || "").trim();
+        if(barcodeSrc){
+            try{
+                const barcodeUrl = new URL(barcodeSrc, document.baseURI);
+                if(barcodeUrl.origin === location.origin){
+                    barcodeUrl.searchParams.set("_barcode", Date.now().toString(36));
+                }
+                $("coverBarcode").src = barcodeUrl.href;
+            }catch(e){
+                $("coverBarcode").src = barcodeSrc;
+            }
+            $("coverBarcodeBox").classList.add("has-custom-barcode");
+        }else{
+            $("coverBarcode").removeAttribute("src");
+            $("coverBarcodeBox").classList.remove("has-custom-barcode");
+        }
+    }
     if($("coverStamp") && cv.stampImage){
         try{
             const stampUrl = new URL(cv.stampImage, document.baseURI);

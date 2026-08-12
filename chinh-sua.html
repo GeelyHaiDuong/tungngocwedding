@@ -267,12 +267,13 @@ const $=id=>document.getElementById(id);
 
 const IMAGE_GROUPS=[
   {
-    title:"Cover / Passport",
+    title:"Cover / Passport — gồm cả Barcode",
     open:true,
     items:[
       {path:"cover.background",label:"Nền Cover",ratio:"Khuyến nghị 420×862 hoặc cùng tỷ lệ dọc"},
       {path:"cover.passportImage",label:"Ảnh Passport",ratio:"Ảnh bìa Passport"},
-      {path:"cover.planeImage",label:"Máy bay nhỏ trên Boarding Pass",ratio:"PNG nền trong suốt"},
+      {path:"cover.planeImage",label:"Máy bay nhỏ trên phần Boarding Pass",ratio:"PNG nền trong suốt — đây KHÔNG phải barcode phía dưới Passport"},
+      {path:"cover.barcodeImage",label:"Mã barcode phía dưới Passport",ratio:"PNG nền trong suốt hoặc nền trắng; khuyến nghị ảnh ngang"},
       {path:"cover.routePlaneImage",label:"Máy bay Flight Route",ratio:"PNG nền trong suốt"},
       {path:"cover.stampImage",label:"Con dấu Passport",ratio:"PNG nền trong suốt"}
     ]
