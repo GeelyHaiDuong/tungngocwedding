@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="cover-preview-fix-version" content="v22">
     <meta name="family-cache-fix-version" content="20260810-family-v20">
     <meta name="family-fix-version" content="20260810-family-v18">
     <meta name="cover-shell-version" content="20260810-1918-v14">
@@ -2264,11 +2265,16 @@ input, textarea, select{
 
         if(frame){
             const coverParams = new URLSearchParams();
-            for(const key of ["guest","khach","to"]){
+
+            // Chuyển tiếp cả thông tin khách và chế độ xem trước sang cover iframe.
+            // Nếu không có preview=1, cover.html sẽ chỉ đọc config.js thật.
+            for(const key of ["guest","khach","to","preview","_v"]){
                 const value = params.get(key);
                 if(value) coverParams.set(key,value);
             }
-            coverParams.set("v", "20260810-1918-v14");
+
+            // Cache-bust cover mỗi lần tải để ảnh vừa thay trong editor hiện ngay.
+            coverParams.set("v", Date.now().toString(36));
             frame.src = "cover.html?" + coverParams.toString();
         }
     }
