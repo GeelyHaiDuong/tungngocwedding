@@ -1340,11 +1340,12 @@ input, textarea, select{
 
 
 
-<style id="section3-split-background-v31">
+
+<style id="section3-split-background-v32">
 /* =========================================================
-   V31 — sửa lại chiều nền SECTION3
-   - PHẦN TRÊN: nền xanh giống khu vực phía trên ảnh
-   - PHẦN DƯỚI: nền giấy sáng giống khu vực lịch phía dưới
+   V32 — nền SECTION3:
+   - phần trên giữ texture xanh
+   - phần dưới đổi sang màu giấy sáng giống vùng được khoanh đỏ
    ========================================================= */
 
 #SECTION3{
@@ -1356,7 +1357,7 @@ input, textarea, select{
     overflow:hidden !important;
 }
 
-/* PHẦN TRÊN — texture xanh */
+/* PHẦN TRÊN — giữ nền xanh */
 #SECTION3 > .ladi-section-background::before{
     content:"";
     position:absolute;
@@ -1366,14 +1367,13 @@ input, textarea, select{
     width:100%;
     height:250px;
 
-    /* Đây mới là texture xanh đúng */
     background-image:url("https://w.ladicdn.com/s750x900/691804d3a89f3900120ca482/bg-20260722044704-ekhfc.jpg");
     background-size:cover;
     background-position:center top;
     background-repeat:no-repeat;
 }
 
-/* PHẦN DƯỚI — texture giấy sáng */
+/* PHẦN DƯỚI — màu được lấy gần với vùng khoanh đỏ */
 #SECTION3 > .ladi-section-background::after{
     content:"";
     position:absolute;
@@ -1383,19 +1383,25 @@ input, textarea, select{
     right:0;
     bottom:0;
 
-    /* Đây là texture giấy sáng */
-    background-image:url("https://w.ladicdn.com/s750x1150/691804d3a89f3900120ca482/3b21313433bf61e1d3a916125632a117-20260721142048-e2kek.jpg");
-    background-size:cover;
-    background-position:center top;
-    background-repeat:repeat-y;
+    background:#f8f3f3 !important;
+
+    /* lớp chuyển rất nhẹ để tránh đường cắt quá cứng */
+    background-image:
+      linear-gradient(
+        to bottom,
+        rgba(248,243,243,.96) 0%,
+        rgba(248,243,243,1) 70px,
+        rgba(248,243,243,1) 100%
+      ) !important;
 }
 
-/* Ẩn nền cũ để không chồng texture */
+/* Không dùng hai lớp nền cũ nữa */
 #SECTION3 #IMAGE14,
 #SECTION3 #IMAGE25{
     display:none !important;
 }
 
+/* Ảnh cưới và calendar nằm trên nền mới */
 #SECTION3 #IMAGE24,
 #SECTION3 #GROUP76{
     z-index:5 !important;
