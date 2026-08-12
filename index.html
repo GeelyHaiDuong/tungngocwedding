@@ -1339,25 +1339,24 @@ input, textarea, select{
 </style>
 
 
-<style id="section3-split-background-v30">
+
+<style id="section3-split-background-v31">
 /* =========================================================
-   V30 — Nền phía sau ảnh lớn SECTION3 chia 2 nửa:
-   - nửa trên: texture xanh giống phần phía trên
-   - nửa dưới: texture giấy sáng giống phần calendar phía dưới
-   Ảnh cưới nằm đè lên đường chuyển nền để bố cục liền mạch.
+   V31 — sửa lại chiều nền SECTION3
+   - PHẦN TRÊN: nền xanh giống khu vực phía trên ảnh
+   - PHẦN DƯỚI: nền giấy sáng giống khu vực lịch phía dưới
    ========================================================= */
 
 #SECTION3{
     position:relative !important;
 }
 
-/* Xóa background cũ của section để tự dựng 2 lớp nền */
 #SECTION3 > .ladi-section-background{
     background:none !important;
     overflow:hidden !important;
 }
 
-/* NỬA TRÊN — nền xanh */
+/* PHẦN TRÊN — texture xanh */
 #SECTION3 > .ladi-section-background::before{
     content:"";
     position:absolute;
@@ -1367,14 +1366,14 @@ input, textarea, select{
     width:100%;
     height:250px;
 
-    /* Dùng đúng texture xanh đã có sẵn trong SECTION3 */
-    background-image:url("https://w.ladicdn.com/s750x1150/691804d3a89f3900120ca482/3b21313433bf61e1d3a916125632a117-20260721142048-e2kek.jpg");
+    /* Đây mới là texture xanh đúng */
+    background-image:url("https://w.ladicdn.com/s750x900/691804d3a89f3900120ca482/bg-20260722044704-ekhfc.jpg");
     background-size:cover;
     background-position:center top;
     background-repeat:no-repeat;
 }
 
-/* NỬA DƯỚI — nền giấy sáng */
+/* PHẦN DƯỚI — texture giấy sáng */
 #SECTION3 > .ladi-section-background::after{
     content:"";
     position:absolute;
@@ -1384,25 +1383,20 @@ input, textarea, select{
     right:0;
     bottom:0;
 
-    /* Dùng đúng texture nền sáng của phần calendar phía dưới */
-    background-image:url("https://w.ladicdn.com/s750x900/691804d3a89f3900120ca482/bg-20260722044704-ekhfc.jpg");
+    /* Đây là texture giấy sáng */
+    background-image:url("https://w.ladicdn.com/s750x1150/691804d3a89f3900120ca482/3b21313433bf61e1d3a916125632a117-20260721142048-e2kek.jpg");
     background-size:cover;
     background-position:center top;
     background-repeat:repeat-y;
 }
 
-/* Ẩn 2 ảnh nền cũ để chúng không chồng lên lớp nền mới */
+/* Ẩn nền cũ để không chồng texture */
 #SECTION3 #IMAGE14,
 #SECTION3 #IMAGE25{
     display:none !important;
 }
 
-/* Ảnh cưới luôn nằm trên 2 lớp nền */
-#SECTION3 #IMAGE24{
-    z-index:5 !important;
-}
-
-/* Phần calendar/Wedding Ticket nằm trên nền sáng */
+#SECTION3 #IMAGE24,
 #SECTION3 #GROUP76{
     z-index:5 !important;
 }
