@@ -233,6 +233,17 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <h2>Tất cả ảnh có thể thay</h2>
     <p class="section-note">Các nhóm được thu gọn để dễ thao tác. Bấm tên nhóm để mở.</p>
     <div id="imageEditor"></div>
+    <div class="story-card">
+      <h3>Thiết lập Barcode</h3>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px">
+        <input id="barcodeInvert" type="checkbox" style="width:auto">
+        Đảo màu barcode nền đen → nền trắng
+      </label>
+      <div class="section-note" style="margin-top:7px;margin-bottom:0">
+        Bật tùy chọn này nếu file barcode của anh đang là nền đen/vạch sáng.
+        Nếu đã dùng barcode nền trắng/vạch đen thì bỏ chọn.
+      </div>
+    </div>
     <div class="help">
       Ví dụ: nếu đã upload ảnh cô dâu vào <code>assets/images/couple/bride.jpg</code>,
       chỉ cần nhập đúng đường dẫn đó. Nếu thumbnail hiện đúng thì đường dẫn đã hợp lệ.
@@ -481,6 +492,7 @@ function fill(c){
 
   renderStories(c);
   renderImageEditor(c);
+  if($("barcodeInvert")) $("barcodeInvert").checked = c.cover.barcodeInvert !== false;
 }
 
 function collect(){
@@ -490,6 +502,7 @@ function collect(){
   c.couple.brideInitials=val("brideInitials"); c.couple.groomInitials=val("groomInitials");
   c.guest.defaultName=val("guestDefault")||"Quý khách";
   c.cover.monogram=val("monogram");
+  c.cover.barcodeInvert = $("barcodeInvert") ? $("barcodeInvert").checked : true;
   c.family.brideParents=val("brideParents"); c.family.groomParents=val("groomParents");
 
   c.event.date=val("eventDate"); c.event.receptionTime=val("receptionTime");

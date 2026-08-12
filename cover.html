@@ -1158,6 +1158,28 @@ html, body{
 }
 </style>
 
+
+<style id="barcode-background-v25">
+/* =========================================================
+   V25 — xử lý ảnh barcode nền đen
+   barcodeInvert=true:
+   ảnh "negative" (nền đen / vạch sáng) sẽ đổi thành
+   nền trắng / vạch tối, phù hợp Boarding Pass.
+   ========================================================= */
+.ticket-barcode{
+    background:#fff !important;
+}
+
+.ticket-barcode-image{
+    background:#fff !important;
+    mix-blend-mode:normal !important;
+}
+
+.ticket-barcode-image.barcode-invert{
+    filter:invert(1) grayscale(1) contrast(1.35) !important;
+}
+</style>
+
 </head>
 <body>
 <!-- COVER_BUILD:20260810-1905-v13 -->
@@ -1300,8 +1322,10 @@ html, body{
                 $("coverBarcode").src = barcodeSrc;
             }
             $("coverBarcodeBox").classList.add("has-custom-barcode");
+            $("coverBarcode").classList.toggle("barcode-invert", cv.barcodeInvert !== false);
         }else{
             $("coverBarcode").removeAttribute("src");
+            $("coverBarcode").classList.remove("barcode-invert");
             $("coverBarcodeBox").classList.remove("has-custom-barcode");
         }
     }
