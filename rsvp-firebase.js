@@ -18,6 +18,9 @@ import {
 
 const SETTINGS = window.WEDDING_FIREBASE || {};
 const SITE = window.WEDDING_CONFIG || {};
+const URL_FLAGS_V39 = new URLSearchParams(window.location.search);
+const WISH_DEBUG_V39 = URL_FLAGS_V39.get("wishdebug") === "1";
+const WISH_DEMO_V39 = URL_FLAGS_V39.get("wishdemo") === "1";
 
 function readyFirebaseConfig(cfg) {
   if (!cfg || typeof cfg !== "object") return false;
@@ -199,6 +202,13 @@ function showFeedback(message, error = false) {
   }, error ? 5200 : 3800);
 }
 
+
+function showWishDebugV39(message, error = false) {
+  if (!WISH_DEBUG_V39) return;
+  showFeedback("[Wish Debug] " + message, error);
+  console[error ? "error" : "info"]("[Wish Debug]", message);
+}
+
 function createWishPopup() {
   let root = document.getElementById("wedding-wish-popup-v37");
   if (root) return root;
@@ -221,6 +231,28 @@ function createWishPopup() {
   });
 
   return root;
+}
+
+
+function runWishDemoV39() {
+  if (!WISH_DEMO_V39) return;
+
+  const root = createWishPopup();
+  const nameEl = root.querySelector(".wish-name-v37");
+  const msgEl = root.querySelector(".wish-message-v37");
+
+  function tryShow() {
+    if (coverIsOpen()) {
+      setTimeout(tryShow, 900);
+      return;
+    }
+    nameEl.textContent = "Lời chúc từ Khách thử nghiệm";
+    msgEl.textContent = "Chúc Hoàng Tùng & Bích Ngọc trăm năm hạnh phúc ♡";
+    root.classList.add("is-visible");
+    setTimeout(() => root.classList.remove("is-visible"), 7000);
+  }
+
+  setTimeout(tryShow, 900);
 }
 
 function coverIsOpen() {
@@ -288,18 +320,40 @@ function initWishRotator(db) {
   }
 
   onSnapshot(q, (snapshot) => {
-    wishes = snapshot.docs
-      .map((d) => ({ id: d.id, ...d.data() }))
+    const approvedDocs = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }));
+
+    wishes = approvedDocs
       .filter((w) => w.eventId === eventId() && trimText(w.name, 80) && trimText(w.message, 500))
       .sort((a, b) => timestampMillis(b.createdAt) - timestampMillis(a.createdAt));
 
     cursor = 0;
+
+    showWishDebugV39(
+      `Firebase OK · approved query=${approvedDocs.length} · đúng eventId=${wishes.length} · eventId=${eventId()}`
+    );
+
+    if (!wishes.length && approvedDocs.length > 0) {
+      showWishDebugV39(
+        "Có lời chúc approved=true nhưng eventId không khớp với thiệp hiện tại.",
+        true
+      );
+    } else if (!wishes.length) {
+      showWishDebugV39(
+        "Chưa có document wedding_wishes nào approved=true mà website đọc được.",
+        true
+      );
+    }
 
     if (wishes.length && !activeTimer && !gapTimer) {
       scheduleNext(1200);
     }
   }, (error) => {
     console.warn("[Wedding RSVP] Không tải được lời chúc:", error);
+    showWishDebugV39(
+      `Firestore không đọc được wedding_wishes: ${error && error.code ? error.code : error}`,
+      true
+    );
   });
 }
 
@@ -458,6 +512,7 @@ function boot() {
 
   if (SETTINGS.enabled === false || !readyFirebaseConfig(SETTINGS.firebaseConfig)) {
     showFirebaseSetupWarning();
+    showWishDebugV39("firebase-config.js chưa hợp lệ hoặc chưa tải được.", true);
     return;
   }
 
@@ -467,8 +522,10 @@ function boot() {
 
     initRsvpForm(db);
     initWishRotator(db);
+    runWishDemoV39();
 
-    console.info("[Wedding RSVP] Firebase V37 đã sẵn sàng:", eventId());
+    console.info("[Wedding RSVP] Firebase V39 đã sẵn sàng:", eventId());
+    showWishDebugV39(`Khởi tạo Firebase thành công · eventId=${eventId()}`);
   } catch (error) {
     console.error("[Wedding RSVP] Không khởi tạo được Firebase:", error);
     showFeedback("Không thể kết nối Firebase.", true);
