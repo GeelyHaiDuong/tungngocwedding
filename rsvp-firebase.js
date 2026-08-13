@@ -449,11 +449,14 @@ function initRsvpForm(db) {
       // They remain invisible until approved=true is set in Firebase Console.
       if (payload.message) {
         const wishRef = doc(collection(db, wishesCollection));
+        const autoApproveWish =
+          !!(SETTINGS.wishesPopup && SETTINGS.wishesPopup.autoApprove === true);
+
         batch.set(wishRef, {
           eventId: eventId(),
           name: payload.name,
           message: payload.message,
-          approved: false,
+          approved: autoApproveWish,
           createdAt: serverTimestamp()
         });
       }
@@ -461,7 +464,11 @@ function initRsvpForm(db) {
       await batch.commit();
 
       if (buttonText) buttonText.textContent = "ĐÃ GỬI ✓";
-      showFeedback("Cảm ơn bạn! Xác nhận tham dự đã được ghi nhận.");
+      showFeedback(
+        SETTINGS.wishesPopup && SETTINGS.wishesPopup.autoApprove === true && payload.message
+          ? "Cảm ơn bạn! Lời chúc đã được ghi nhận và sẽ xuất hiện trên thiệp."
+          : "Cảm ơn bạn! Xác nhận tham dự đã được ghi nhận."
+      );
 
       // Keep guest name for convenience, clear the rest.
       const message = form.querySelector('[name="message"]');

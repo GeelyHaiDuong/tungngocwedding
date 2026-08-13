@@ -27,6 +27,9 @@ window.WEDDING_FIREBASE = {
 
   wishesPopup: {
     enabled: true,
+
+    // true = lời chúc vừa gửi sẽ hiện popup ngay, không cần duyệt thủ công
+    autoApprove: true,
     displayMs: 6200,
     gapMs: 2600,
     maxItems: 40
