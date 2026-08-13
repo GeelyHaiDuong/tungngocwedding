@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
     <meta name="footer-fix-version" content="v34">
     <meta name="barcode-editor-version" content="v24">
@@ -1598,6 +1599,126 @@ input, textarea, select{
 }
 </style>
 
+
+<style id="wedding-ticket-scroll-fx-v36">
+/* =========================================================
+   V36 — WEDDING TICKET TEXT SCROLL EFFECT
+   Chỉ kích hoạt khi JavaScript đã sẵn sàng.
+   Hiệu ứng chạy 1 lần khi SECTION2 đi vào màn hình.
+   ========================================================= */
+
+#SECTION2.ticket-fx-ready .ticket-fx{
+    opacity:0 !important;
+    will-change:transform, opacity, filter;
+    transition:
+        opacity .72s cubic-bezier(.22,.61,.36,1) var(--ticket-delay,0ms),
+        transform .78s cubic-bezier(.22,.61,.36,1) var(--ticket-delay,0ms),
+        filter .72s ease var(--ticket-delay,0ms),
+        letter-spacing .85s cubic-bezier(.22,.61,.36,1) var(--ticket-delay,0ms) !important;
+}
+
+/* Tắt animation LadiPage cũ cho đúng các text đang dùng hiệu ứng V36 */
+#SECTION2.ticket-fx-ready .ticket-fx.ladi-animation > .ladi-headline,
+#SECTION2.ticket-fx-ready .ticket-fx.ladi-animation > .ladi-group{
+    animation:none !important;
+}
+
+/* Wedding Ticket title */
+#SECTION2.ticket-fx-ready #HEADLINE3{
+    transform:translateY(-18px) scale(.97) !important;
+    filter:blur(5px);
+}
+#SECTION2.ticket-fx-ready #HEADLINE3 > .ladi-headline{
+    letter-spacing:5px !important;
+}
+
+/* Bride / Groom: đi vào từ hai phía */
+#SECTION2.ticket-fx-ready #HEADLINE4{
+    transform:translateX(-24px) !important;
+    filter:blur(3px);
+}
+#SECTION2.ticket-fx-ready #HEADLINE7{
+    transform:translateX(24px) !important;
+    filter:blur(3px);
+}
+
+/* Invitation + location: đi nhẹ từ dưới lên */
+#SECTION2.ticket-fx-ready #HEADLINE9,
+#SECTION2.ticket-fx-ready #GROUP2{
+    transform:translateY(20px) !important;
+    filter:blur(3px);
+}
+
+/* Date ticket: zoom nhẹ */
+#SECTION2.ticket-fx-ready #GROUP8{
+    transform:translateY(16px) scale(.94) !important;
+    filter:blur(2px);
+}
+
+/* Nhà gái / nhà trai tách hai phía */
+#SECTION2.ticket-fx-ready #HEADLINE20{
+    transform:translateX(-20px) !important;
+}
+#SECTION2.ticket-fx-ready #HEADLINE19{
+    transform:translateX(20px) !important;
+}
+
+/* Chỉ đường */
+#SECTION2.ticket-fx-ready #GROUP7{
+    transform:translateY(12px) scale(.96) !important;
+}
+
+/* Trạng thái khi section đi vào viewport */
+#SECTION2.ticket-fx-ready.ticket-fx-visible .ticket-fx{
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
+}
+
+#SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE3 > .ladi-headline{
+    letter-spacing:2px !important;
+}
+
+/* Date cells có thêm nhịp pop nhỏ */
+#SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE15 > .ladi-headline,
+#SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE16 > .ladi-headline,
+#SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE17 > .ladi-headline{
+    animation:ticketDatePopV36 .55s cubic-bezier(.2,.8,.25,1.25) both;
+}
+#SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE15 > .ladi-headline{animation-delay:.78s}
+#SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE16 > .ladi-headline{animation-delay:.88s}
+#SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE17 > .ladi-headline{animation-delay:.98s}
+
+@keyframes ticketDatePopV36{
+    0%{opacity:0;transform:scale(.78) translateY(5px)}
+    70%{opacity:1;transform:scale(1.045) translateY(0)}
+    100%{opacity:1;transform:scale(1)}
+}
+
+/* Mobile: giảm quãng di chuyển để hiệu ứng nhẹ và không xô layout */
+@media(max-width:419px){
+    #SECTION2.ticket-fx-ready #HEADLINE4{transform:translateX(-16px) !important}
+    #SECTION2.ticket-fx-ready #HEADLINE7{transform:translateX(16px) !important}
+    #SECTION2.ticket-fx-ready #HEADLINE20{transform:translateX(-14px) !important}
+    #SECTION2.ticket-fx-ready #HEADLINE19{transform:translateX(14px) !important}
+}
+
+/* Tôn trọng cài đặt giảm chuyển động của thiết bị */
+@media(prefers-reduced-motion:reduce){
+    #SECTION2.ticket-fx-ready .ticket-fx{
+        opacity:1 !important;
+        transform:none !important;
+        filter:none !important;
+        transition:none !important;
+    }
+    #SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE15 > .ladi-headline,
+    #SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE16 > .ladi-headline,
+    #SECTION2.ticket-fx-ready.ticket-fx-visible #HEADLINE17 > .ladi-headline{
+        animation:none !important;
+    }
+}
+</style>
+
 </head>
 <body class="">
 
@@ -2882,6 +3003,75 @@ input, textarea, select{
     }
 
     window.addEventListener("load", applyFooterV34, {once:true});
+})();
+</script>
+
+
+<script id="wedding-ticket-scroll-fx-v36">
+(function(){
+    "use strict";
+
+    function initWeddingTicketFX(){
+        const section = document.getElementById("SECTION2");
+        if(!section || section.dataset.ticketFxInit === "1") return;
+
+        section.dataset.ticketFxInit = "1";
+
+        const steps = [
+            ["HEADLINE3",   0],
+            ["HEADLINE4", 120],
+            ["HEADLINE7", 210],
+            ["HEADLINE9", 330],
+            ["GROUP2",    470],
+            ["GROUP8",    610],
+            ["HEADLINE20",760],
+            ["HEADLINE19",850],
+            ["GROUP7",    980]
+        ];
+
+        steps.forEach(function(item){
+            const el = document.getElementById(item[0]);
+            if(!el) return;
+            el.classList.add("ticket-fx");
+            el.style.setProperty("--ticket-delay", item[1] + "ms");
+        });
+
+        /* Chỉ bật trạng thái hidden sau khi class đã được gắn đầy đủ,
+           vì vậy nếu JS lỗi thì nội dung vẫn luôn nhìn thấy. */
+        section.classList.add("ticket-fx-ready");
+
+        function reveal(){
+            if(section.classList.contains("ticket-fx-visible")) return;
+            requestAnimationFrame(function(){
+                section.classList.add("ticket-fx-visible");
+            });
+        }
+
+        if(!("IntersectionObserver" in window)){
+            reveal();
+            return;
+        }
+
+        const observer = new IntersectionObserver(function(entries){
+            entries.forEach(function(entry){
+                if(entry.isIntersecting){
+                    reveal();
+                    observer.disconnect(); // chạy một lần
+                }
+            });
+        },{
+            threshold:0.12,
+            rootMargin:"0px 0px -12% 0px"
+        });
+
+        observer.observe(section);
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", initWeddingTicketFX, {once:true});
+    }else{
+        initWeddingTicketFX();
+    }
 })();
 </script>
 
