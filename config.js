@@ -50,9 +50,9 @@ window.WEDDING_CONFIG = {
     },
     "groom": {
       "buttonText": "Gửi quà đến chú rể",
-      "bankName": "",
-      "accountNumber": "",
-      "accountName": "",
+      "bankName": "MBBANK",
+      "accountNumber": "0180180406688",
+      "accountName": "Nguyen Hoang Tung",
       "qrImage": ""
     }
   },
@@ -104,13 +104,13 @@ window.WEDDING_CONFIG = {
     "groomPortrait": "assets/images/couple/groom.png",
     "bridePortrait": "assets/images/couple/bride.png",
     "flight": [
-      "https://w.ladicdn.com/s450x500/691804d3a89f3900120ca482/26-20260723054657-dqjre.jpg",
-      "https://w.ladicdn.com/s450x500/691804d3a89f3900120ca482/27-20260723054657-utb6w.jpg"
+      "assets/images/flight/flight-01.png",
+      "assets/images/flight/flight-02.png"
     ],
     "albumCover": [
-      "https://w.ladicdn.com/s500x600/691804d3a89f3900120ca482/untitled-session8993-20260723065536-kjxub.jpg",
-      "https://w.ladicdn.com/s550x650/691804d3a89f3900120ca482/27-20260723054657-utb6w.jpg",
-      "https://w.ladicdn.com/s500x600/691804d3a89f3900120ca482/17-20260723030200-qccht.jpg"
+      "assets/images/album/cover-01.png",
+      "assets/images/album/cover-02.png",
+      "assets/images/album/cover-03.png"
     ],
     "album": [
       "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8493-20260723065514-bbbqk.jpg",
@@ -132,7 +132,7 @@ window.WEDDING_CONFIG = {
       "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8370-20260723065511-3ipnx.jpg",
       "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8365-1-20260723065510-gkulf.jpg"
     ],
-    "footer": "https://w.ladicdn.com/s750x650/691804d3a89f3900120ca482/untitled-session8397-20260723070608-fwixc.jpg"
+    "footer": "assets/images/footer/footer.png"
   }
 };
 
