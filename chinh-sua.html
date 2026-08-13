@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Chỉnh sửa thiệp cưới</title>
+<title>Chỉnh sửa thiệp cưới — Đồng bộ GitHub</title>
 <script>document.write('<script src="config.js?v='+Date.now()+'"><\/script>');</script>
 <style>
 :root{
@@ -150,12 +150,16 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <div class="app">
   <section class="hero">
     <h1>Chỉnh sửa thiệp cưới</h1>
-    <p>Phiên bản V21: chỉnh nội dung + toàn bộ các nhóm ảnh đang dùng trên website. Mỗi ô ảnh có thumbnail xem trước ngay khi nhập đường dẫn.</p>
+    <p>V43: tự đồng bộ dữ liệu từ <b>config.js trên GitHub</b> khi mở trang. Bản nháp trên trình duyệt không còn tự ghi đè dữ liệu GitHub.</p>
   </section>
 
   <div class="notice">
-    Ảnh có thể dùng URL <b>https://...</b> hoặc đường dẫn trong GitHub như
-    <code>assets/images/family/family-01.jpg</code>. Thumbnail sẽ tự cập nhật.
+    <b>Nguồn dữ liệu chính:</b> file <code>config.js</code> trên nhánh <code>main</code> của GitHub.
+    Trang sẽ tự nạp config mới nhất khi mở. Ảnh có thể dùng URL <b>https://...</b> hoặc
+    đường dẫn như <code>assets/images/family/family-01.jpg</code>.
+  </div>
+  <div id="syncInfo" class="notice" style="background:#eef8f2;border-color:#cfe3d4;color:#45634d">
+    Đang đồng bộ config.js từ GitHub...
   </div>
 
   <nav class="tabs">
@@ -249,6 +253,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   <section class="section">
     <h2>Công cụ</h2>
     <div class="small-actions">
+      <button class="main primary" id="syncGithubBtn" type="button">Đồng bộ config.js từ GitHub</button>
+      <button class="main secondary" id="loadDraftBtn" type="button">Nạp bản nháp</button>
       <button class="main secondary" id="resetBtn" type="button">Khôi phục config.js</button>
       <button class="main secondary" id="clearPreviewBtn" type="button">Xóa bản xem trước</button>
     </div>
@@ -269,8 +275,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 "use strict";
 
 const STORAGE_KEY="WEDDING_CONFIG_PREVIEW_V1";
-const BASE=JSON.parse(JSON.stringify(window.WEDDING_CONFIG||{}));
+let BASE=JSON.parse(JSON.stringify(window.WEDDING_CONFIG||{}));
 const $=id=>document.getElementById(id);
+const RAW_CONFIG_URL="https://raw.githubusercontent.com/GeelyHaiDuong/tungngocwedding/main/config.js";
+const GITHUB_CONFIG_LABEL="GeelyHaiDuong/tungngocwedding · main/config.js";
 
 const IMAGE_GROUPS=[
   {
@@ -528,6 +536,142 @@ function status(msg){
   clearTimeout(status.timer);status.timer=setTimeout(()=>el.style.display="none",3500)
 }
 
+
+function extractWeddingConfigFromJs(source){
+  source=String(source||"");
+  const marker="window.WEDDING_CONFIG";
+  let pos=source.indexOf(marker);
+  if(pos<0)throw new Error("Không tìm thấy window.WEDDING_CONFIG trong config.js");
+
+  pos=source.indexOf("=",pos+marker.length);
+  if(pos<0)throw new Error("config.js không đúng định dạng");
+
+  const start=source.indexOf("{",pos);
+  if(start<0)throw new Error("Không tìm thấy object cấu hình");
+
+  let depth=0;
+  let quote="";
+  let escaped=false;
+
+  for(let i=start;i<source.length;i++){
+    const ch=source[i];
+
+    if(quote){
+      if(escaped){escaped=false;continue}
+      if(ch==="\\"){escaped=true;continue}
+      if(ch===quote){quote=""}
+      continue;
+    }
+
+    if(ch==='"' || ch==="'"){
+      quote=ch;
+      continue;
+    }
+
+    if(ch==="{"){depth++;continue}
+
+    if(ch==="}"){
+      depth--;
+      if(depth===0){
+        return JSON.parse(source.slice(start,i+1));
+      }
+    }
+  }
+
+  throw new Error("Object WEDDING_CONFIG chưa đóng đầy đủ");
+}
+
+function setSyncInfo(message,ok=true){
+  const el=$("syncInfo");
+  if(!el)return;
+  el.textContent=message;
+  el.style.background=ok?"#eef8f2":"#fff3e9";
+  el.style.borderColor=ok?"#cfe3d4":"#efd3b8";
+  el.style.color=ok?"#45634d":"#8b6038";
+}
+
+async function syncFromGithub(options={}){
+  const silent=!!options.silent;
+  const btn=$("syncGithubBtn");
+
+  if(btn){
+    btn.disabled=true;
+    btn.textContent="Đang đồng bộ...";
+  }
+
+  if(!silent)setSyncInfo("Đang tải config.js mới nhất từ GitHub...",true);
+
+  try{
+    const response=await fetch(RAW_CONFIG_URL+"?_sync="+Date.now(),{
+      method:"GET",
+      cache:"no-store",
+      headers:{"Accept":"text/plain"}
+    });
+
+    if(!response.ok)throw new Error("GitHub trả về HTTP "+response.status);
+
+    const source=await response.text();
+    const fresh=ensure(extractWeddingConfigFromJs(source));
+
+    window.WEDDING_CONFIG=clone(fresh);
+    BASE=clone(fresh);
+    fill(BASE);
+
+    const time=new Intl.DateTimeFormat("vi-VN",{
+      hour:"2-digit",minute:"2-digit",second:"2-digit"
+    }).format(new Date());
+
+    if(localStorage.getItem(STORAGE_KEY)){
+      setSyncInfo(
+        `✓ Đã đồng bộ ${GITHUB_CONFIG_LABEL} lúc ${time}. Có bản nháp cũ nhưng không tự ghi đè; bấm “Nạp bản nháp” nếu muốn dùng.`,
+        true
+      );
+    }else{
+      setSyncInfo(`✓ Đã đồng bộ ${GITHUB_CONFIG_LABEL} lúc ${time}.`,true);
+    }
+
+    if(!silent)status("Đã nạp config.js mới nhất từ GitHub.");
+    return fresh;
+  }catch(err){
+    console.error("Không đồng bộ được config.js GitHub:",err);
+
+    if(window.WEDDING_CONFIG && Object.keys(window.WEDDING_CONFIG).length){
+      BASE=clone(window.WEDDING_CONFIG);
+      fill(BASE);
+      setSyncInfo(
+        "Không đọc được Raw GitHub; đang dùng config.js đã tải cùng website. "+err.message,
+        false
+      );
+    }else{
+      setSyncInfo("Không tải được config.js: "+err.message,false);
+    }
+
+    if(!silent)status("Không đồng bộ được GitHub. Đã dùng config.js hiện có.");
+    return null;
+  }finally{
+    if(btn){
+      btn.disabled=false;
+      btn.textContent="Đồng bộ config.js từ GitHub";
+    }
+  }
+}
+
+function loadDraft(){
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if(!raw){
+    status("Chưa có bản nháp trên trình duyệt.");
+    return;
+  }
+
+  try{
+    fill(ensure(JSON.parse(raw)));
+    status("Đã nạp bản nháp. config.js trên GitHub chưa bị thay đổi.");
+  }catch(err){
+    console.error(err);
+    status("Bản nháp bị lỗi, không thể nạp.");
+  }
+}
+
 function saveDraft(){
   const c=collect();localStorage.setItem(STORAGE_KEY,JSON.stringify(c));return c
 }
@@ -576,7 +720,7 @@ function exportConfig(){
 
   const file=`/*
 ========================================================
- WEDDING CONFIG — xuất từ chinh-sua.html V21
+ WEDDING CONFIG — xuất từ chinh-sua.html V43
 ========================================================
 */
 window.WEDDING_CONFIG = ${JSON.stringify(c,null,2)};
@@ -593,13 +737,25 @@ ${helper}
 $("saveDraftBtn").addEventListener("click",()=>{saveDraft();status("Đã lưu tạm trên trình duyệt.")});
 $("previewBtn").addEventListener("click",preview);
 $("exportBtn").addEventListener("click",exportConfig);
-$("resetBtn").addEventListener("click",()=>{localStorage.removeItem(STORAGE_KEY);fill(BASE);status("Đã khôi phục dữ liệu từ config.js.")});
-$("clearPreviewBtn").addEventListener("click",()=>{localStorage.removeItem(STORAGE_KEY);status("Đã xóa bản xem trước.")});
+$("syncGithubBtn").addEventListener("click",()=>syncFromGithub({silent:false}));
+$("loadDraftBtn").addEventListener("click",loadDraft);
+$("resetBtn").addEventListener("click",()=>{
+  localStorage.removeItem(STORAGE_KEY);
+  fill(BASE);
+  status("Đã khôi phục dữ liệu theo config.js GitHub vừa đồng bộ.");
+});
+$("clearPreviewBtn").addEventListener("click",()=>{
+  localStorage.removeItem(STORAGE_KEY);
+  status("Đã xóa bản xem trước / bản nháp.");
+});
 
-const saved=localStorage.getItem(STORAGE_KEY);
-if(saved){
-  try{fill(JSON.parse(saved))}catch(e){fill(BASE)}
-}else fill(BASE);
+/*
+ V43:
+ - Luôn ưu tiên config.js đang có trên GitHub.
+ - localStorage chỉ được dùng khi chủ động bấm "Nạp bản nháp".
+*/
+fill(BASE);
+syncFromGithub({silent:true});
 
 })();
 </script>
