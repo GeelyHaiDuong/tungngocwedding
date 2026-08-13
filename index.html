@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="footer-card-version" content="v35">
     <meta name="footer-fix-version" content="v34">
     <meta name="barcode-editor-version" content="v24">
     <meta name="cover-preview-fix-version" content="v22">
@@ -1509,6 +1510,91 @@ input, textarea, select{
 /* Gift controls remain above the footer if their areas touch */
 #SECTION9 #WEDDING_GIFT_ACTIONS{
     z-index:20 !important;
+}
+</style>
+
+
+<style id="footer-card-v35">
+/* =========================================================
+   V35 — Footer dạng card nổi trên nền thiệp
+   - thu nhỏ để lộ nền xanh xung quanh
+   - bo tròn 4 góc
+   - nằm trên nền SECTION9 thay vì sát mép trang
+   ========================================================= */
+
+/* Giữ đủ không gian bên dưới footer */
+#SECTION9{
+    height:850px !important;
+}
+
+#SECTION9 #IMAGE100,
+#SECTION9 #IMAGE100 > .ladi-image > .ladi-image-background{
+    height:850px !important;
+}
+
+/* Footer dạng card */
+#SECTION9 #IMAGE102{
+    display:block !important;
+    position:absolute !important;
+
+    width:386px !important;
+    height:198px !important;
+
+    /* căn giữa: (420 - 386) / 2 = 17px */
+    left:17px !important;
+
+    /* đưa lên trên nền thiệp, ngay dưới cụm Gửi quà mừng */
+    top:628px !important;
+
+    z-index:12 !important;
+    opacity:1 !important;
+}
+
+/* Bo tròn toàn bộ card */
+#SECTION9 #IMAGE102 > .ladi-image{
+    width:100% !important;
+    height:100% !important;
+
+    border-radius:18px !important;
+    overflow:hidden !important;
+
+    /* viền sáng rất nhẹ để tách ảnh khỏi nền xanh */
+    border:1px solid rgba(255,255,255,.78) !important;
+
+    /* bóng nhẹ, tạo cảm giác ảnh nằm trên tấm thiệp */
+    box-shadow:
+        0 8px 22px rgba(50,72,74,.16),
+        0 2px 5px rgba(50,72,74,.10) !important;
+
+    background:#f7f3f2 !important;
+    opacity:1 !important;
+}
+
+/* Ảnh lấp đầy card nhưng vẫn giữ trọng tâm giữa */
+#SECTION9 #IMAGE102 > .ladi-image > .ladi-image-background{
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+
+    border-radius:18px !important;
+}
+
+/* Cụm gửi quà luôn nằm trên lớp nền, không bị footer che */
+#SECTION9 #WEDDING_GIFT_ACTIONS{
+    z-index:20 !important;
+}
+
+/* Trên mobile vẫn giữ đúng hệ tọa độ 420px của thiệp */
+@media(max-width:419px){
+    #SECTION9 #IMAGE102{
+        width:386px !important;
+        left:17px !important;
+    }
 }
 </style>
 
