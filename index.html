@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="footer-fix-version" content="v34">
     <meta name="barcode-editor-version" content="v24">
     <meta name="cover-preview-fix-version" content="v22">
     <meta name="family-cache-fix-version" content="20260810-family-v20">
@@ -1456,6 +1457,61 @@ input, textarea, select{
 }
 </style>
 
+
+<style id="footer-display-v34">
+/* =========================================================
+   V34 — Footer cuối trang
+   IMAGE102 trước đây chỉ còn CSS nhưng đã bị thiếu khỏi DOM,
+   nên thay ảnh trong config không thể hiển thị.
+   ========================================================= */
+
+#SECTION9{
+    height:850px !important;
+}
+
+#SECTION9 #IMAGE100,
+#SECTION9 #IMAGE100 > .ladi-image > .ladi-image-background{
+    height:850px !important;
+}
+
+/* Footer nằm sát đáy SECTION9, sau khu vực Gửi quà mừng */
+#SECTION9 #IMAGE102{
+    display:block !important;
+    position:absolute !important;
+    width:420px !important;
+    height:215px !important;
+    top:635px !important;
+    left:0 !important;
+    z-index:8 !important;
+    opacity:1 !important;
+}
+
+#SECTION9 #IMAGE102 > .ladi-image{
+    width:100% !important;
+    height:100% !important;
+    overflow:hidden !important;
+    border:0 !important;
+    filter:none !important;
+    opacity:1 !important;
+}
+
+#SECTION9 #IMAGE102 > .ladi-image > .ladi-image-background{
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+}
+
+/* Gift controls remain above the footer if their areas touch */
+#SECTION9 #WEDDING_GIFT_ACTIONS{
+    z-index:20 !important;
+}
+</style>
+
 </head>
 <body class="">
 
@@ -2120,6 +2176,14 @@ input, textarea, select{
                 </div>
                 <!-- GIFT_ACTIONS_V14_END -->
 
+                <!-- FOOTER_IMAGE_V34_START -->
+                <div id="IMAGE102" class="ladi-element wedding-footer-image">
+                    <div class="ladi-image">
+                        <div class="ladi-image-background"></div>
+                    </div>
+                </div>
+                <!-- FOOTER_IMAGE_V34_END -->
+
             </div>
         </div>
     </div>
@@ -2689,6 +2753,49 @@ input, textarea, select{
     }else{
         initGift();
     }
+})();
+</script>
+
+
+<script id="footer-runtime-v34">
+(function(){
+    "use strict";
+
+    function applyFooterV34(){
+        const cfg = window.WEDDING_CONFIG || {};
+        const src = cfg.images && cfg.images.footer;
+        if(!src) return;
+
+        const bg = document.querySelector("#SECTION9 #IMAGE102 .ladi-image-background");
+        if(!bg) return;
+
+        let url = String(src).trim();
+        if(!url) return;
+
+        try{
+            const u = new URL(url, document.baseURI);
+            if(u.origin === location.origin){
+                u.searchParams.set("_footer", Date.now().toString(36));
+            }
+            url = u.href;
+        }catch(e){}
+
+        bg.style.setProperty("background-image", `url("${url.replace(/"/g,'\\"')}")`, "important");
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", function(){
+            applyFooterV34();
+            setTimeout(applyFooterV34, 120);
+            setTimeout(applyFooterV34, 500);
+        }, {once:true});
+    }else{
+        applyFooterV34();
+        setTimeout(applyFooterV34, 120);
+        setTimeout(applyFooterV34, 500);
+    }
+
+    window.addEventListener("load", applyFooterV34, {once:true});
 })();
 </script>
 
