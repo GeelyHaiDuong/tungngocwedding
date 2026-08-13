@@ -25,6 +25,12 @@ window.WEDDING_FIREBASE = {
     wishes: "wedding_wishes"
   },
 
+  admin: {
+    allowedEmails: [
+      "tunga8hq@gmail.com"
+    ]
+  },
+
   wishesPopup: {
     enabled: true,
 
