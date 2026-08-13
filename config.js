@@ -1,6 +1,11 @@
 /*
 ========================================================
- WEDDING CONFIG — xuất từ chinh-sua.html V21
+ WEDDING CONFIG — V44 HERO VIDEO
+========================================================
+heroVideo.enabled = true  -> Video loop
+heroVideo.enabled = false -> Slideshow 7 ảnh
+Video mặc định: assets/videos/hero.mp4
+Nếu video lỗi/không tồn tại, website tự quay về slideshow.
 ========================================================
 */
 window.WEDDING_CONFIG = {
@@ -24,9 +29,9 @@ window.WEDDING_CONFIG = {
     "andImage": "https://w.ladicdn.com/s450x350/691804d3a89f3900120ca482/and-20260721145856-qn4u1.png",
     "passportImage": "https://w.ladicdn.com/s600x650/691804d3a89f3900120ca482/2-20260723094152-hrck4.png",
     "planeImage": "",
+    "stampImage": "assets/images/cover/passport/stamp.png",
     "routePlaneImage": "assets/images/plane-cover.png",
-    "barcodeImage": "assets/images/cover/barcode.png",
-    "stampImage": "assets/images/cover/passport/stamp.png"
+    "barcodeImage": "assets/images/cover/barcode.png"
   },
   "event": {
     "date": "2026-09-27",
@@ -57,7 +62,7 @@ window.WEDDING_CONFIG = {
     }
   },
   "invitation": {
-    "intro": "Có những cuộc gặp gỡ trở thành duyên,<br>Có những yêu thương trở thành lời hẹn.<br>Trân trọng kính mời bạn đến chung vui<br>cùng gia đình chúng tôi.",
+    "intro": "Có những cuộc gặp gỡ trở thành duyên,<br>Có những yêu thương trở thành lời hẹn.<br>Trân trọng kính mời bạn đến chung vui<br>cùng gia đình chúng tôi.<br>",
     "welcome": "Hân hạnh được đón tiếp quý khách"
   },
   "story": [
@@ -133,6 +138,12 @@ window.WEDDING_CONFIG = {
       "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8365-1-20260723065510-gkulf.jpg"
     ],
     "footer": "assets/images/footer/footer.png"
+  },
+  "heroVideo": {
+    "enabled": true,
+    "src": "assets/videos/hero.mp4",
+    "poster": "https://w.ladicdn.com/s750x750/691804d3a89f3900120ca482/0-20260722031021-8b02n.jpg",
+    "objectPosition": "center center"
   }
 };
 
@@ -148,18 +159,20 @@ window.WEDDING_CONFIG = {
     const raw = localStorage.getItem("WEDDING_CONFIG_PREVIEW_V1");
     if (!raw) return;
     const preview = JSON.parse(raw);
+
     function isObject(v){return v && typeof v === "object" && !Array.isArray(v);}
     function merge(target,source){
       Object.keys(source||{}).forEach(function(key){
         const sv=source[key];
-        if(Array.isArray(sv))target[key]=sv.slice();
+        if(Array.isArray(sv)) target[key]=sv.slice();
         else if(isObject(sv)){
-          if(!isObject(target[key]))target[key]={};
+          if(!isObject(target[key])) target[key]={};
           merge(target[key],sv);
         }else target[key]=sv;
       });
       return target;
     }
+
     window.WEDDING_CONFIG=merge(window.WEDDING_CONFIG||{},preview||{});
   } catch(e) {
     console.warn("Không thể nạp dữ liệu xem trước:",e);

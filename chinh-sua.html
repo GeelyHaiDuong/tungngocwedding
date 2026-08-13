@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Chỉnh sửa thiệp cưới — Đồng bộ GitHub</title>
+<title>Chỉnh sửa thiệp cưới — V44 Hero Video</title>
 <script>document.write('<script src="config.js?v='+Date.now()+'"><\/script>');</script>
 <style>
 :root{
@@ -145,6 +145,25 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   .image-preview-wrap{height:170px}
 }
 </style>
+
+<style id="hero-video-editor-v44">
+.hero-video-editor{
+  margin-bottom:14px;padding:14px;border:1px solid #d8e2e2;
+  border-radius:14px;background:#f8fbfa;
+}
+.hero-video-editor h3{margin:0 0 6px;font-size:16px}
+.hero-video-editor .hint{font-size:12px;line-height:1.55;color:#687b7d;margin-bottom:10px}
+.hero-video-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.hero-video-grid .full{grid-column:1/-1}
+.hero-video-preview-wrap{
+  margin-top:10px;width:min(360px,100%);aspect-ratio:1/1;
+  overflow:hidden;border:1px solid #d8e2e2;border-radius:14px;background:#edf2f1;
+}
+#heroVideoPreview{display:block;width:100%;height:100%;object-fit:cover;background:#edf2f1}
+.hero-mode-note{margin-top:8px;font-size:11px;color:#718587}
+@media(max-width:650px){.hero-video-grid{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -236,6 +255,47 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   <section class="section" id="images">
     <h2>Tất cả ảnh có thể thay</h2>
     <p class="section-note">Các nhóm được thu gọn để dễ thao tác. Bấm tên nhóm để mở.</p>
+
+    <div class="hero-video-editor">
+      <h3>Hero đầu thiệp — Video lặp / Slideshow</h3>
+      <div class="hint">
+        Chỉ thay hình ảnh bên trong cửa sổ máy bay. Khung cửa sổ và toàn bộ chữ phía trên giữ nguyên.
+        Nếu video lỗi/chưa upload, website tự dùng lại Hero ảnh.
+      </div>
+
+      <div class="hero-video-grid">
+        <div class="field">
+          <label>Chế độ Hero</label>
+          <select id="heroMode">
+            <option value="video">Video lặp lại</option>
+            <option value="slideshow">Slideshow 7 ảnh</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Vị trí crop</label>
+          <input id="heroVideoPosition" placeholder="center center">
+        </div>
+        <div class="field full">
+          <label>Video MP4</label>
+          <input id="heroVideoSrc" placeholder="assets/videos/hero.mp4">
+        </div>
+        <div class="field full">
+          <label>Ảnh poster / ảnh chờ</label>
+          <input id="heroVideoPoster" placeholder="assets/images/hero/hero-01.jpg">
+        </div>
+      </div>
+
+      <div class="image-tools" style="margin-top:9px">
+        <button type="button" class="mini-btn" id="openHeroVideoBtn">Mở video</button>
+        <button type="button" class="mini-btn" id="reloadHeroVideoBtn">Tải lại preview</button>
+      </div>
+
+      <div class="hero-video-preview-wrap">
+        <video id="heroVideoPreview" muted loop playsinline preload="metadata"></video>
+      </div>
+      <div class="hero-mode-note">Khuyến nghị MP4 H.264, 1080×1080, 8–20 giây, dưới khoảng 10 MB.</div>
+    </div>
+
     <div id="imageEditor"></div>
     <div class="story-card">
       <h3>Thiết lập Barcode</h3>
@@ -294,7 +354,7 @@ const IMAGE_GROUPS=[
     ]
   },
   {
-    title:"Hero đầu thiệp — 7 ảnh",
+    title:"Hero đầu thiệp — 7 ảnh dự phòng / slideshow",
     items:Array.from({length:7},(_,i)=>({path:`images.hero[${i}]`,label:`Hero ${i+1}`,ratio:"Ảnh vuông / ảnh theo gallery gốc"}))
   },
   {
@@ -354,6 +414,9 @@ function textToHtml(s){return String(s||"").replace(/\r\n|\r|\n/g,"<br>")}
 
 function ensure(c){
   c.guest||={}; c.couple||={}; c.cover||={}; c.event||={}; c.family||={};
+  c.heroVideo||={enabled:false,src:"",poster:"",objectPosition:"center center"};
+  if(typeof c.heroVideo.enabled!=="boolean")c.heroVideo.enabled=false;
+  if(!c.heroVideo.objectPosition)c.heroVideo.objectPosition="center center";
   c.invitation||={}; c.story||=[{},{},{}]; while(c.story.length<3)c.story.push({});
   c.gifts||={}; c.gifts.bride||={}; c.gifts.groom||={}; c.images||={};
   c.images.hero||=[]; c.images.invitation||=[]; c.images.familyFilm||=[];
@@ -472,8 +535,40 @@ function renderStories(c){
   }
 }
 
+
+function updateHeroVideoPreview(){
+  const video=$("heroVideoPreview");
+  if(!video)return;
+
+  const mode=$("heroMode")?.value||"slideshow";
+  const src=val("heroVideoSrc");
+  const poster=val("heroVideoPoster");
+  const pos=val("heroVideoPosition")||"center center";
+
+  video.style.objectPosition=pos;
+  video.poster=poster?previewUrl(poster):"";
+
+  if(mode!=="video"||!src){
+    try{video.pause()}catch(e){}
+    video.removeAttribute("src");
+    try{video.load()}catch(e){}
+    return;
+  }
+
+  video.src=previewUrl(src);
+  video.muted=true;
+  video.loop=true;
+  video.playsInline=true;
+  try{video.load()}catch(e){}
+  video.play().catch(()=>{});
+}
+
 function fill(c){
   c=ensure(clone(c));
+  setInput("heroVideoSrc",c.heroVideo.src);
+  setInput("heroVideoPoster",c.heroVideo.poster);
+  setInput("heroVideoPosition",c.heroVideo.objectPosition||"center center");
+  if($("heroMode"))$("heroMode").value=c.heroVideo.enabled===true?"video":"slideshow";
   setInput("bride",c.couple.bride); setInput("groom",c.couple.groom);
   setInput("brideInitials",c.couple.brideInitials); setInput("groomInitials",c.couple.groomInitials);
   setInput("guestDefault",c.guest.defaultName); setInput("monogram",c.cover.monogram);
@@ -496,11 +591,16 @@ function fill(c){
 
   renderStories(c);
   renderImageEditor(c);
+  setTimeout(updateHeroVideoPreview,30);
 }
 
 function collect(){
   const c=ensure(clone(BASE));
 
+  c.heroVideo.enabled=($("heroMode")?.value==="video");
+  c.heroVideo.src=val("heroVideoSrc");
+  c.heroVideo.poster=val("heroVideoPoster");
+  c.heroVideo.objectPosition=val("heroVideoPosition")||"center center";
   c.couple.bride=val("bride"); c.couple.groom=val("groom");
   c.couple.brideInitials=val("brideInitials"); c.couple.groomInitials=val("groomInitials");
   c.guest.defaultName=val("guestDefault")||"Quý khách";
@@ -720,7 +820,7 @@ function exportConfig(){
 
   const file=`/*
 ========================================================
- WEDDING CONFIG — xuất từ chinh-sua.html V43
+ WEDDING CONFIG — xuất từ chinh-sua.html V44
 ========================================================
 */
 window.WEDDING_CONFIG = ${JSON.stringify(c,null,2)};
@@ -733,6 +833,21 @@ ${helper}
   setTimeout(()=>URL.revokeObjectURL(url),1000);
   status("Đã tạo config.js mới.")
 }
+
+
+["heroMode","heroVideoSrc","heroVideoPoster","heroVideoPosition"].forEach(id=>{
+  const el=$(id);
+  if(!el)return;
+  el.addEventListener("change",updateHeroVideoPreview);
+});
+$("openHeroVideoBtn")?.addEventListener("click",()=>{
+  const src=val("heroVideoSrc");
+  if(src)window.open(previewUrl(src),"_blank");
+});
+$("reloadHeroVideoBtn")?.addEventListener("click",()=>{
+  updateHeroVideoPreview();
+  status("Đã tải lại preview video Hero.");
+});
 
 $("saveDraftBtn").addEventListener("click",()=>{saveDraft();status("Đã lưu tạm trên trình duyệt.")});
 $("previewBtn").addEventListener("click",preview);

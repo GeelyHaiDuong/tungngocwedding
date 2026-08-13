@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <meta name="hero-video-version" content="v44">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -1720,6 +1721,53 @@ input, textarea, select{
 }
 </style>
 
+
+<style id="hero-video-v44-style">
+/*
+ V44: Video nằm bên trong GALLERY1.
+ IMAGE15 (khung cửa sổ máy bay) và GROUP37 (tên/chữ phía trên)
+ được giữ nguyên hoàn toàn.
+*/
+#SECTION5 #GALLERY1 > .ladi-gallery,
+#SECTION5 #GALLERY1 .ladi-gallery-view{
+  overflow:hidden !important;
+}
+#SECTION5 #HERO_VIDEO_V44{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+  object-fit:cover !important;
+  object-position:center center;
+  z-index:5 !important;
+  opacity:0;
+  pointer-events:none;
+  background:transparent;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  transition:opacity .42s ease;
+}
+#SECTION5 #GALLERY1.hero-video-ready #HERO_VIDEO_V44{
+  opacity:1;
+}
+#SECTION5 #GALLERY1.hero-video-ready .ladi-gallery-view-item{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+#SECTION5 #IMAGE15{
+  pointer-events:none;
+}
+#SECTION5 #HERO_VIDEO_V44::-webkit-media-controls{
+  display:none !important;
+}
+@media(prefers-reduced-motion:reduce){
+  #SECTION5 #HERO_VIDEO_V44{transition:none !important;}
+}
+</style>
+
 </head>
 <body class="">
 
@@ -2396,6 +2444,146 @@ input, textarea, select{
         </div>
     </div>
 
+
+<script id="hero-video-v44-runtime">
+(function(){
+  "use strict";
+
+  function getCfg(){
+    const C=window.WEDDING_CONFIG||{};
+    const H=C.heroVideo||{};
+    return {
+      enabled:H.enabled===true,
+      src:String(H.src||"").trim(),
+      poster:String(H.poster||"").trim(),
+      objectPosition:String(H.objectPosition||"center center").trim()||"center center"
+    };
+  }
+
+  function resolve(src){
+    if(!src)return "";
+    try{
+      const u=new URL(src,document.baseURI);
+      if(u.origin===location.origin){
+        u.searchParams.set("_hero",Date.now().toString(36));
+      }
+      return u.href;
+    }catch(e){return src}
+  }
+
+  function init(){
+    const cfg=getCfg();
+    if(!cfg.enabled||!cfg.src)return;
+
+    const gallery=document.getElementById("GALLERY1");
+    if(!gallery||gallery.dataset.heroVideoV44==="1")return;
+
+    const view=gallery.querySelector(".ladi-gallery-view");
+    if(!view)return;
+
+    gallery.dataset.heroVideoV44="1";
+
+    const video=document.createElement("video");
+    video.id="HERO_VIDEO_V44";
+    video.autoplay=true;
+    video.muted=true;
+    video.defaultMuted=true;
+    video.loop=true;
+    video.playsInline=true;
+    video.preload="metadata";
+    video.controls=false;
+    video.disablePictureInPicture=true;
+    video.setAttribute("playsinline","");
+    video.setAttribute("webkit-playsinline","");
+    video.setAttribute("muted","");
+    video.setAttribute("loop","");
+    video.setAttribute("autoplay","");
+    video.style.objectPosition=cfg.objectPosition;
+
+    if(cfg.poster)video.poster=resolve(cfg.poster);
+
+    let ready=false;
+    let visible=true;
+    let dead=false;
+
+    function coverOpen(){
+      return !!document.getElementById("wedding-cover-shell");
+    }
+
+    async function syncPlay(){
+      if(dead||!ready)return;
+      const reduce=window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if(visible&&!coverOpen()&&!reduce){
+        try{
+          video.muted=true;
+          await video.play();
+        }catch(e){
+          console.warn("[Hero V44] autoplay bị chặn:",e);
+        }
+      }else{
+        try{video.pause()}catch(e){}
+      }
+    }
+
+    function activate(){
+      if(dead||ready)return;
+      ready=true;
+      gallery.classList.add("hero-video-ready");
+      syncPlay();
+    }
+
+    function fallback(reason){
+      if(dead)return;
+      dead=true;
+      gallery.classList.remove("hero-video-ready");
+      try{video.pause()}catch(e){}
+      video.remove();
+      console.warn("[Hero V44] fallback slideshow:",reason||"video error");
+    }
+
+    video.addEventListener("loadeddata",activate,{once:true});
+    video.addEventListener("canplay",activate,{once:true});
+    video.addEventListener("error",()=>{
+      fallback(video.error ? "MediaError "+video.error.code : "Không tải được video");
+    },{once:true});
+
+    if("IntersectionObserver" in window){
+      const io=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          visible=entry.isIntersecting;
+          syncPlay();
+        });
+      },{threshold:.08});
+      io.observe(gallery);
+    }
+
+    const coverTimer=setInterval(()=>{
+      if(dead){clearInterval(coverTimer);return}
+      if(!coverOpen()){
+        clearInterval(coverTimer);
+        syncPlay();
+      }
+    },350);
+
+    document.addEventListener("visibilitychange",syncPlay);
+
+    /*
+      Chèn video vào chính ladi-gallery-view.
+      IMAGE15 nằm ngoài GALLERY1 nên khung cửa sổ vẫn phủ lên video như cũ.
+    */
+    view.appendChild(video);
+    video.src=resolve(cfg.src);
+    try{video.load()}catch(e){}
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",init,{once:true});
+  }else init();
+})();
+</script>
+
 <script id="completion_runtime">
 (function () {
   "use strict";
@@ -2682,7 +2870,12 @@ input, textarea, select{
     initVerticalLoopFilm();
 
     // Opening square gallery + album gallery.
-    initGallery(document.getElementById("GALLERY1"), 4800);
+    if(!(window.WEDDING_CONFIG &&
+         window.WEDDING_CONFIG.heroVideo &&
+         window.WEDDING_CONFIG.heroVideo.enabled===true &&
+         String(window.WEDDING_CONFIG.heroVideo.src||"").trim())){
+      initGallery(document.getElementById("GALLERY1"),4800);
+    }
     initGallery(document.getElementById("GALLERY6"), 4300);
 
     initCountdown();
