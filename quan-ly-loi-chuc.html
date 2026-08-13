@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#5f7c7d">
-  <title>Quản lý lời chúc cưới</title>
+  <title>Quản lý lời chúc & RSVP — V42</title>
   <script src="firebase-config.js?v=41"></script>
   <style>
     :root{
@@ -195,6 +195,7 @@
         <button class="tab" data-view="rsvp" type="button">RSVP</button>
       </div>
       <input id="searchInput" class="search" type="search" placeholder="Tìm tên hoặc nội dung...">
+      <button id="deleteFilteredRsvpBtn" class="btn btn-red hidden" type="button">Xóa RSVP đang lọc</button>
       <button id="exportBtn" class="btn btn-ghost" type="button">Xuất CSV</button>
     </section>
 
@@ -230,6 +231,7 @@
               <th>Điện thoại</th>
               <th>Lời chúc</th>
               <th>Thời gian</th>
+              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody id="rsvpBody"></tbody>
@@ -245,7 +247,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import {
   getFirestore, collection, query, orderBy, onSnapshot,
-  doc, updateDoc, deleteDoc
+  doc, updateDoc, deleteDoc, writeBatch
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
@@ -451,7 +453,7 @@ function renderRsvp(){
   const rows=filteredRsvps();
   $("rsvpCount").textContent=`${rows.length} phản hồi`;
   $("rsvpBody").innerHTML=rows.map(r=>`
-    <tr>
+    <tr data-rsvp-id="${esc(r.id)}">
       <td><b>${esc(r.name||"")}</b></td>
       <td class="${r.attendance==="yes"?"attend-yes":"attend-no"}">
         ${r.attendance==="yes"?"Tham dự":"Không tham dự"}
@@ -460,10 +462,13 @@ function renderRsvp(){
       <td>${esc(r.phone||"")}</td>
       <td>${esc(r.message||"")}</td>
       <td>${esc(timeText(r.createdAt))}</td>
+      <td>
+        <button class="btn btn-red" data-rsvp-action="delete" type="button">Xóa</button>
+      </td>
     </tr>
   `).join("");
   if(!rows.length){
-    $("rsvpBody").innerHTML='<tr><td colspan="6" class="empty">Chưa có RSVP phù hợp.</td></tr>';
+    $("rsvpBody").innerHTML='<tr><td colspan="7" class="empty">Chưa có RSVP phù hợp.</td></tr>';
   }
 }
 
@@ -505,6 +510,38 @@ $("wishList").addEventListener("click",async e=>{
   }
 });
 
+
+$("rsvpBody").addEventListener("click",async e=>{
+  const btn=e.target.closest("[data-rsvp-action]");
+  if(!btn) return;
+
+  const row=btn.closest("[data-rsvp-id]");
+  if(!row) return;
+
+  const id=row.dataset.rsvpId;
+  const rsvpCollection=(SETTINGS.collections&&SETTINGS.collections.rsvp)||"wedding_rsvp";
+  const item=rsvps.find(r=>r.id===id);
+
+  const label=item
+    ? `${item.name||"Khách"} · ${item.attendance==="yes" ? "Tham dự" : "Không tham dự"} · ${Number(item.guests)||0} người`
+    : "RSVP này";
+
+  if(!confirm(`Xóa vĩnh viễn xác nhận:\\n${label}?`)) return;
+
+  btn.disabled=true;
+  btn.textContent="Đang xóa...";
+
+  try{
+    await deleteDoc(doc(db,rsvpCollection,id));
+    toast("Đã xóa xác nhận RSVP.");
+  }catch(err){
+    console.error(err);
+    toast("Không xóa được RSVP. Hãy kiểm tra Firestore Rules V41/V42.",true);
+    btn.disabled=false;
+    btn.textContent="Xóa";
+  }
+});
+
 document.querySelectorAll("[data-filter]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     document.querySelectorAll("[data-filter]").forEach(b=>b.classList.remove("active"));
@@ -524,10 +561,56 @@ document.querySelectorAll("[data-view]").forEach(btn=>{
     $("searchInput").placeholder=activeView==="wishes"
       ?"Tìm tên hoặc nội dung lời chúc..."
       :"Tìm tên, điện thoại hoặc lời chúc...";
+    $("deleteFilteredRsvpBtn").classList.toggle("hidden",activeView!=="rsvp");
   });
 });
 
 $("searchInput").addEventListener("input",renderAll);
+
+
+$("deleteFilteredRsvpBtn").addEventListener("click",async()=>{
+  const rows=filteredRsvps();
+  if(!rows.length){
+    toast("Không có RSVP nào trong bộ lọc hiện tại.",true);
+    return;
+  }
+
+  const totalGuests=rows
+    .filter(r=>r.attendance==="yes")
+    .reduce((sum,r)=>sum+(Number(r.guests)||0),0);
+
+  if(!confirm(
+    `Xóa ${rows.length} xác nhận RSVP đang hiển thị?\\n`+
+    `Tổng số khách tham dự bị xóa khỏi thống kê: ${totalGuests}.\\n\\n`+
+    `Thao tác này không thể hoàn tác.`
+  )) return;
+
+  const btn=$("deleteFilteredRsvpBtn");
+  btn.disabled=true;
+  const oldText=btn.textContent;
+  btn.textContent="Đang xóa...";
+
+  try{
+    const rsvpCollection=(SETTINGS.collections&&SETTINGS.collections.rsvp)||"wedding_rsvp";
+
+    // Firestore batch supports up to 500 writes; admin page limits this action to current loaded rows.
+    for(let i=0;i<rows.length;i+=450){
+      const batch=writeBatch(db);
+      rows.slice(i,i+450).forEach(r=>{
+        batch.delete(doc(db,rsvpCollection,r.id));
+      });
+      await batch.commit();
+    }
+
+    toast(`Đã xóa ${rows.length} xác nhận RSVP.`);
+  }catch(err){
+    console.error(err);
+    toast("Không xóa được RSVP. Kiểm tra quyền admin/Firestore Rules.",true);
+  }finally{
+    btn.disabled=false;
+    btn.textContent=oldText;
+  }
+});
 
 function csvCell(v){
   const s=String(v==null?"":v).replace(/"/g,'""');
