@@ -77,13 +77,13 @@ window.WEDDING_CONFIG = {
   "albumCaption": "Together, Hoàng Tùng & Bích Ngọc begin a new journey filled with love and dreams.",
   "images": {
     "hero": [
-      "assets/images/hero/hero-01.png",
-      "assets/images/hero/hero-02.jpg",
-      "assets/images/hero/hero-01.jpg",
-      "assets/images/hero/hero-04.jpg",
-      "assets/images/hero/hero-01.png",
-      "assets/images/hero/hero-02.jpg",
-      "assets/images/hero/hero-01.jpg"
+      "assets/images/hero/5401.jpeg",
+      "assets/images/hero/5400.jpeg",
+      "assets/images/hero/5399.jpeg",
+      "assets/images/hero/5401.jpeg",
+      "assets/images/hero/5400.jpeg",
+      "assets/images/hero/5399.jpeg",
+      "assets/images/hero/5401.jpeg"
     ],
     "invitation": [
       "assets/images/invitation/invitation-01.png",
@@ -113,24 +113,24 @@ window.WEDDING_CONFIG = {
       "assets/images/album/cover-03.png"
     ],
     "album": [
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8493-20260723065514-bbbqk.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8717-20260723065519-lw-bu.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8762-1-20260723065532-trsev.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8794-20260723065533-2b1dv.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8873-20260723065534-m3fkb.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8964-20260723065535-b27oa.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8993-20260723065536-kjxub.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session9067-20260723065537-3tcdi.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session9077-20260723065538-7neru.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session9110-20260723065539-zjsrz.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8656-20260723065518-wzjvq.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8636-20260723065517-bi06e.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8606-20260723065516-u4ioe.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8594-20260723065515-zytuw.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8474-20260723065513-8i5kh.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8740-20260723065531-kjp0b.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8370-20260723065511-3ipnx.jpg",
-      "https://w.ladicdn.com/s750x1050/691804d3a89f3900120ca482/untitled-session8365-1-20260723065510-gkulf.jpg"
+      "assets/images/album/galery (1).jpg",
+      "assets/images/album/galery (2).jpg",
+      "assets/images/album/galery (3).jpg",
+      "assets/images/album/galery (4).jpg",
+      "assets/images/album/galery (5).jpg",
+      "assets/images/album/galery (6).jpg",
+      "assets/images/album/galery (7).jpg",
+      "assets/images/album/galery (8).jpg",
+      "assets/images/album/galery (9).jpg",
+      "assets/images/album/galery (10).jpg",
+      "assets/images/album/galery (11).jpg",
+      "assets/images/album/galery (12).jpg",
+      "assets/images/album/galery (13).jpg",
+      "assets/images/album/galery (14).jpg",
+      "assets/images/album/galery (15).jpg",
+      "assets/images/album/galery (16).jpg",
+      "assets/images/album/galery (17).jpg",
+      "assets/images/album/galery (18).jpg"
     ],
     "footer": "assets/images/footer/footer.png"
   },
