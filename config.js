@@ -43,17 +43,17 @@ window.WEDDING_CONFIG = {
   "gifts": {
     "bride": {
       "buttonText": "Gửi quà đến cô dâu",
-      "bankName": "",
-      "accountNumber": "",
-      "accountName": "",
-      "qrImage": ""
+      "bankName": "Techcombank",
+      "accountNumber": "19039796676013",
+      "accountName": "Tran Thi Bich Ngoc",
+      "qrImage": "assets/images/QR/TK Ngoc.jpg"
     },
     "groom": {
       "buttonText": "Gửi quà đến chú rể",
-      "bankName": "MBBANK",
-      "accountNumber": "0180180406688",
+      "bankName": "Vietcombank",
+      "accountNumber": "1038175602",
       "accountName": "Nguyen Hoang Tung",
-      "qrImage": ""
+      "qrImage": "assets/images/QR/tk Tung.jpg"
     }
   },
   "invitation": {
