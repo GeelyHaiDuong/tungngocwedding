@@ -132,7 +132,7 @@ window.WEDDING_CONFIG = {
       "assets/images/album/galery (17).jpg",
       "assets/images/album/galery (18).jpg"
     ],
-    "footer": "assets/images/footer/footer.png"
+    "footer": "assets/images/footer/footer1.png"
   },
   "heroVideo": {
     "enabled": false,
