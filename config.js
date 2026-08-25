@@ -86,12 +86,12 @@ window.WEDDING_CONFIG = {
       "assets/images/hero/5401.jpeg"
     ],
     "invitation": [
-      "assets/images/invitation/invitation-01.png",
+      "assets/images/invitation/invitation-01..jpg",
       "assets/images/invitation/invitation-02.jpg",
       "assets/images/invitation/invitation-03.png"
     ],
     "story": "assets/images/story/story-main.JPG",
-    "familyMain": "assets/images/family/familyMain.jpeg",
+    "familyMain": "assets/images/family/familyMain.png",
     "familyFilm": [
       "assets/images/family/family-01.jpg",
       "assets/images/family/family-02.jpg",
@@ -104,19 +104,19 @@ window.WEDDING_CONFIG = {
     "groomPortrait": "assets/images/couple/groom.png",
     "bridePortrait": "assets/images/couple/bride.png",
     "flight": [
-      "assets/images/flight/flight-01.png",
-      "assets/images/flight/flight-02.png"
+      "assets/images/flight/flight1.jpg",
+      "assets/images/flight/flight2.jpg"
     ],
     "albumCover": [
-      "assets/images/album/cover-01.png",
-      "assets/images/album/cover-02.png",
+      "assets/images/album/cover-01.jpg",
+      "assets/images/album/cover-02.jpg",
       "assets/images/album/cover-03.png"
     ],
     "album": [
       "assets/images/album/galery (1).jpg",
       "assets/images/album/galery (2).jpg",
-      "assets/images/album/galery (3).jpg",
-      "assets/images/album/galery (4).jpg",
+      "assets/images/album/galery(19).jpg",
+      "assets/images/album/galery(20).jpg",
       "assets/images/album/galery (5).jpg",
       "assets/images/album/galery (6).jpg",
       "assets/images/album/galery (7).jpg",
