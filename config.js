@@ -108,9 +108,9 @@ window.WEDDING_CONFIG = {
       "assets/images/flight/flight2.jpg"
     ],
     "albumCover": [
-      "assets/images/album/cover-01.jpg",
       "assets/images/album/cover-02.jpg",
-      "assets/images/album/cover-03.png"
+      "assets/images/album/cover-01.jpg",
+      "assets/images/album/cover03.jpg"
     ],
     "album": [
       "assets/images/album/galery (1).jpg",
