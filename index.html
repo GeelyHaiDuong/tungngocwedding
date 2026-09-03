@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta name="hero-video-version" content="v44">
-    <meta name="cover-guest-version" content="v49">
+    <meta name="cover-guest-version" content="v50">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -2903,8 +2903,9 @@ input, textarea, select{
 </script>
     <script src="customize-family-v28.js?v=family-parents-v28"></script>
 
-<!-- COVER_GUEST_V49_START -->
-<script id="cover-guest-v49">
+<!-- COVER_GUEST_V50_START -->
+<!-- V50: sửa xuống dòng thật cho tên khách trong SVG/text của Cover. -->
+<script id="cover-guest-v50">
 (function () {
     "use strict";
 
@@ -2960,9 +2961,9 @@ input, textarea, select{
     function injectFont(doc) {
         if (!doc || !doc.head) return;
 
-        if (!doc.getElementById("cover-guest-font-v49")) {
+        if (!doc.getElementById("cover-guest-font-v50")) {
             const link = doc.createElement("link");
-            link.id = "cover-guest-font-v49";
+            link.id = "cover-guest-font-v50";
             link.rel = "stylesheet";
             link.href =
                 "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap";
@@ -3169,25 +3170,27 @@ input, textarea, select{
 
         if (
             el.dataset &&
-            el.dataset.coverGuestV49 === signature &&
+            el.dataset.coverGuestV50 === signature &&
             el.querySelector &&
-            el.querySelector(".cover-guest-line-v49")
+            el.querySelector(".cover-guest-line-v50")
         ) {
             return true;
         }
 
         if (el.dataset) {
-            el.dataset.coverGuestV49 = signature;
+            el.dataset.coverGuestV50 = signature;
         }
 
         el.replaceChildren();
 
         lines.forEach(function (line) {
             const span = el.ownerDocument.createElement("span");
-            span.className = "cover-guest-line-v49";
+            span.className = "cover-guest-line-v50";
             span.textContent = line;
 
             important(span, "display", "block");
+            important(span, "float", "none");
+            important(span, "clear", "both");
             important(span, "width", "100%");
             important(span, "height", "18px");
             important(span, "line-height", "18px");
@@ -3244,11 +3247,11 @@ input, textarea, select{
 
         if (!parent) return false;
 
-        let overlay = parent.querySelector(".cover-guest-input-overlay-v49");
+        let overlay = parent.querySelector(".cover-guest-input-overlay-v50");
 
         if (!overlay) {
             overlay = doc.createElement("div");
-            overlay.className = "cover-guest-input-overlay-v49";
+            overlay.className = "cover-guest-input-overlay-v50";
             parent.appendChild(overlay);
         }
 
@@ -3263,21 +3266,73 @@ input, textarea, select{
         const longName = guestName.length > 26;
         const doc = el.ownerDocument;
 
+        /*
+          V50 FIX:
+          Nếu element tìm được là <tspan>, không tạo <tspan> lồng bên trong.
+          Luôn render các dòng thành các <tspan> sibling trực tiếp của <text>.
+        */
+        let textEl = el;
+
+        const tag = String(el.tagName || "").toLowerCase();
+
+        if (tag === "tspan") {
+            const parentText = el.closest ? el.closest("text") : null;
+            if (parentText) {
+                textEl = parentText;
+            }
+        }
+
+        const originalTspan =
+            tag === "tspan"
+                ? el
+                : (textEl.querySelector ? textEl.querySelector("tspan") : null);
+
         important(
-            el,
+            textEl,
             "font-family",
             '"Cormorant Garamond", Georgia, "Times New Roman", serif'
         );
-        important(el, "font-style", "normal");
-        important(el, "font-weight", "600");
-        important(el, "font-size", longName ? "18.5px" : "21px");
-        important(el, "text-anchor", "middle");
+        important(textEl, "font-style", "normal");
+        important(textEl, "font-weight", "600");
+        important(textEl, "font-size", longName ? "18.5px" : "20px");
+        important(textEl, "text-anchor", "middle");
 
         const x =
-            el.getAttribute("x") ||
+            (originalTspan && originalTspan.getAttribute("x")) ||
+            textEl.getAttribute("x") ||
             "50%";
 
-        el.textContent = "";
+        const yRaw =
+            (originalTspan && originalTspan.getAttribute("y")) ||
+            textEl.getAttribute("y") ||
+            "";
+
+        let numericY = null;
+
+        if (yRaw && /^-?\d+(?:\.\d+)?$/.test(String(yRaw).trim())) {
+            numericY = parseFloat(yRaw);
+        }
+
+        textEl.textContent = "";
+
+        if (lines.length === 1) {
+            const tspan = doc.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "tspan"
+            );
+
+            tspan.setAttribute("x", x);
+
+            if (numericY !== null) {
+                tspan.setAttribute("y", String(numericY));
+            } else {
+                tspan.setAttribute("dy", "0");
+            }
+
+            tspan.textContent = lines[0];
+            textEl.appendChild(tspan);
+            return true;
+        }
 
         lines.forEach(function (line, index) {
             const tspan = doc.createElementNS(
@@ -3286,10 +3341,30 @@ input, textarea, select{
             );
 
             tspan.setAttribute("x", x);
-            tspan.setAttribute("dy", index === 0 ? "0" : "18");
-            tspan.textContent = line;
 
-            el.appendChild(tspan);
+            if (numericY !== null) {
+                tspan.setAttribute(
+                    "y",
+                    String(numericY + (index === 0 ? -8 : 11))
+                );
+            } else {
+                tspan.setAttribute(
+                    "dy",
+                    index === 0 ? "-8" : "19"
+                );
+            }
+
+            important(
+                tspan,
+                "font-family",
+                '"Cormorant Garamond", Georgia, "Times New Roman", serif'
+            );
+            important(tspan, "font-style", "normal");
+            important(tspan, "font-weight", "600");
+            important(tspan, "font-size", "inherit");
+
+            tspan.textContent = line;
+            textEl.appendChild(tspan);
         });
 
         return true;
@@ -3327,7 +3402,7 @@ input, textarea, select{
     /*
       Hàm public để cover-shell-runtime gọi NGAY KHI iframe load.
     */
-    window.patchCoverGuestV49 = function (frame, guestName) {
+    window.patchCoverGuestV50 = function (frame, guestName) {
         if (!frame || !guestName) return;
 
         let doc;
@@ -3337,7 +3412,7 @@ input, textarea, select{
                 frame.contentDocument ||
                 (frame.contentWindow && frame.contentWindow.document);
         } catch (e) {
-            console.warn("[Cover Guest V49] iframe khác origin:", e);
+            console.warn("[Cover Guest V50] iframe khác origin:", e);
             return;
         }
 
@@ -3395,7 +3470,7 @@ input, textarea, select{
     };
 })();
 </script>
-<!-- COVER_GUEST_V49_END -->
+<!-- COVER_GUEST_V50_END -->
 
 <script id="cover-shell-runtime">
 (function(){
@@ -3446,12 +3521,12 @@ input, textarea, select{
                 "";
 
             /*
-              V49: listener được gắn TRƯỚC khi set frame.src,
+              V50: listener được gắn TRƯỚC khi set frame.src,
               vì vậy không còn race condition như patch cuối trang.
             */
-            if(coverGuestName && window.patchCoverGuestV49){
+            if(coverGuestName && window.patchCoverGuestV50){
                 frame.addEventListener("load", function(){
-                    window.patchCoverGuestV49(frame, coverGuestName);
+                    window.patchCoverGuestV50(frame, coverGuestName);
                 });
             }
 
