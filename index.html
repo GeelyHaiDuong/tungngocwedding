@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta name="hero-video-version" content="v44">
-    <meta name="cover-guest-version" content="v48">
+    <meta name="cover-guest-version" content="v49">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -2903,6 +2903,500 @@ input, textarea, select{
 </script>
     <script src="customize-family-v28.js?v=family-parents-v28"></script>
 
+<!-- COVER_GUEST_V49_START -->
+<script id="cover-guest-v49">
+(function () {
+    "use strict";
+
+    function clean(value) {
+        return String(value || "")
+            .replace(/\+/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function norm(value) {
+        return clean(value)
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+    }
+
+    function splitBalanced(name) {
+        const words = clean(name).split(" ").filter(Boolean);
+
+        if (words.length <= 3 && name.length <= 21) {
+            return [name];
+        }
+
+        if (words.length < 2) {
+            return [name];
+        }
+
+        let best = null;
+
+        for (let i = 1; i < words.length; i++) {
+            const a = words.slice(0, i).join(" ");
+            const b = words.slice(i).join(" ");
+
+            let score = Math.abs(a.length - b.length);
+
+            if (a.length < 5) score += 20;
+            if (b.length < 5) score += 20;
+
+            if (!best || score < best.score) {
+                best = { a: a, b: b, score: score };
+            }
+        }
+
+        return best ? [best.a, best.b] : [name];
+    }
+
+    function important(el, prop, value) {
+        if (!el || !el.style) return;
+        el.style.setProperty(prop, value, "important");
+    }
+
+    function injectFont(doc) {
+        if (!doc || !doc.head) return;
+
+        if (!doc.getElementById("cover-guest-font-v49")) {
+            const link = doc.createElement("link");
+            link.id = "cover-guest-font-v49";
+            link.rel = "stylesheet";
+            link.href =
+                "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap";
+            doc.head.appendChild(link);
+        }
+    }
+
+    function findByKnownSelectors(doc) {
+        const selectors = [
+            "#guestName",
+            "#guest-name",
+            "#coverGuest",
+            "#coverGuestName",
+            "#cover-guest-name",
+            ".guest-name",
+            ".cover-guest-name",
+            "[data-guest-name]",
+            "[data-guest]"
+        ];
+
+        for (const selector of selectors) {
+            const el = doc.querySelector(selector);
+            if (el) return el;
+        }
+
+        return null;
+    }
+
+    function findInputByValue(doc, guestName) {
+        const wanted = norm(guestName);
+
+        for (const el of doc.querySelectorAll("input,textarea")) {
+            if (norm(el.value) === wanted) {
+                return el;
+            }
+        }
+
+        return null;
+    }
+
+    function findExactTextElement(doc, guestName) {
+        const wanted = norm(guestName);
+        const candidates = [];
+
+        /*
+          Dùng "*" thay vì chỉ div/span.
+          Như vậy nếu cover dùng thẻ lạ hoặc SVG text thì vẫn tìm thấy.
+        */
+        for (const el of doc.querySelectorAll("*")) {
+            if (
+                el.tagName === "SCRIPT" ||
+                el.tagName === "STYLE" ||
+                el.tagName === "LINK" ||
+                el.tagName === "META"
+            ) {
+                continue;
+            }
+
+            const text = norm(el.textContent);
+
+            if (text === wanted) {
+                const childCount = el.children ? el.children.length : 0;
+                const rect = el.getBoundingClientRect
+                    ? el.getBoundingClientRect()
+                    : { width: 9999, height: 9999 };
+
+                candidates.push({
+                    el: el,
+                    childCount: childCount,
+                    area: Math.max(1, rect.width * rect.height)
+                });
+            }
+        }
+
+        if (!candidates.length) return null;
+
+        /*
+          Ưu tiên phần tử lá và vùng nhỏ nhất,
+          tránh bắt nhầm cả container chứa title + tên khách.
+        */
+        candidates.sort(function (a, b) {
+            if (a.childCount !== b.childCount) {
+                return a.childCount - b.childCount;
+            }
+
+            return a.area - b.area;
+        });
+
+        return candidates[0].el;
+    }
+
+    function findByTextNode(doc, guestName) {
+        const wanted = norm(guestName);
+
+        const walker = doc.createTreeWalker(
+            doc.body,
+            NodeFilter.SHOW_TEXT
+        );
+
+        let node;
+
+        while ((node = walker.nextNode())) {
+            if (norm(node.nodeValue) === wanted) {
+                return node.parentElement;
+            }
+        }
+
+        return null;
+    }
+
+    function findNearInvitationTitle(doc, guestName) {
+        const titleWanted = norm("TRÂN TRỌNG KÍNH MỜI");
+        const guestWanted = norm(guestName);
+        const guestWords = guestWanted.split(" ").filter(Boolean);
+
+        const all = Array.from(doc.querySelectorAll("*"));
+
+        const titleEl = all.find(function (el) {
+            return norm(el.textContent) === titleWanted;
+        });
+
+        if (!titleEl) return null;
+
+        let box = titleEl;
+
+        for (let level = 0; level < 5 && box; level++, box = box.parentElement) {
+            const candidates = Array.from(box.querySelectorAll("*"))
+                .filter(function (el) {
+                    if (el === titleEl) return false;
+
+                    const text = norm(el.textContent);
+
+                    if (!text || text === titleWanted) return false;
+                    if (text.length > guestWanted.length + 15) return false;
+
+                    let hits = 0;
+
+                    guestWords.forEach(function (word) {
+                        if (text.includes(word)) hits++;
+                    });
+
+                    return hits >= Math.min(2, guestWords.length);
+                })
+                .sort(function (a, b) {
+                    return a.querySelectorAll("*").length -
+                           b.querySelectorAll("*").length;
+                });
+
+            if (candidates.length) {
+                return candidates[0];
+            }
+        }
+
+        return null;
+    }
+
+    function findGuestElement(doc, guestName) {
+        return (
+            findByKnownSelectors(doc) ||
+            findInputByValue(doc, guestName) ||
+            findExactTextElement(doc, guestName) ||
+            findByTextNode(doc, guestName) ||
+            findNearInvitationTitle(doc, guestName)
+        );
+    }
+
+    function makeHtmlGuest(el, guestName) {
+        const lines = splitBalanced(guestName);
+        const longName = guestName.length > 26;
+
+        /*
+          Dùng inline !important để thắng cả CSS rất mạnh của cover cũ.
+          Đây là khác biệt chính so với V47/V48.
+        */
+        important(
+            el,
+            "font-family",
+            '"Cormorant Garamond", Georgia, "Times New Roman", serif'
+        );
+        important(el, "font-style", "normal");
+        important(el, "font-weight", "600");
+        important(el, "font-size", longName ? "18.5px" : "21px");
+        important(el, "line-height", "18px");
+        important(el, "letter-spacing", "0.1px");
+        important(el, "text-align", "center");
+        important(el, "text-transform", "none");
+
+        important(el, "box-sizing", "border-box");
+        important(el, "width", "174px");
+        important(el, "max-width", "174px");
+        important(el, "min-height", lines.length > 1 ? "38px" : "22px");
+        important(el, "height", "auto");
+        important(el, "padding", "0 2px");
+        important(el, "margin-left", "auto");
+        important(el, "margin-right", "auto");
+
+        important(el, "white-space", "normal");
+        important(el, "word-break", "normal");
+        important(el, "overflow-wrap", "normal");
+        important(el, "overflow", "visible");
+        important(el, "text-overflow", "clip");
+
+        const signature = lines.join("|");
+
+        if (
+            el.dataset &&
+            el.dataset.coverGuestV49 === signature &&
+            el.querySelector &&
+            el.querySelector(".cover-guest-line-v49")
+        ) {
+            return true;
+        }
+
+        if (el.dataset) {
+            el.dataset.coverGuestV49 = signature;
+        }
+
+        el.replaceChildren();
+
+        lines.forEach(function (line) {
+            const span = el.ownerDocument.createElement("span");
+            span.className = "cover-guest-line-v49";
+            span.textContent = line;
+
+            important(span, "display", "block");
+            important(span, "width", "100%");
+            important(span, "height", "18px");
+            important(span, "line-height", "18px");
+            important(span, "white-space", "nowrap");
+            important(span, "text-align", "center");
+            important(
+                span,
+                "font-family",
+                '"Cormorant Garamond", Georgia, "Times New Roman", serif'
+            );
+            important(span, "font-size", "inherit");
+            important(span, "font-weight", "600");
+            important(span, "font-style", "normal");
+
+            el.appendChild(span);
+        });
+
+        /*
+          LadiPage thường khóa chiều cao ở div cha.
+          Mở vùng chứa vừa đủ để dòng thứ 2 không bị cắt.
+        */
+        let parent = el.parentElement;
+
+        for (let i = 0; i < 3 && parent; i++, parent = parent.parentElement) {
+            important(parent, "overflow", "visible");
+
+            if (
+                parent.classList &&
+                (
+                    parent.classList.contains("ladi-element") ||
+                    parent.classList.contains("ladi-headline")
+                )
+            ) {
+                important(
+                    parent,
+                    "min-height",
+                    lines.length > 1 ? "40px" : "23px"
+                );
+                important(parent, "height", "auto");
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    function makeInputGuest(el, guestName) {
+        /*
+          Input không thể xuống dòng.
+          Tạo một div thay thế ngay trên vị trí input.
+        */
+        const doc = el.ownerDocument;
+        const parent = el.parentElement;
+
+        if (!parent) return false;
+
+        let overlay = parent.querySelector(".cover-guest-input-overlay-v49");
+
+        if (!overlay) {
+            overlay = doc.createElement("div");
+            overlay.className = "cover-guest-input-overlay-v49";
+            parent.appendChild(overlay);
+        }
+
+        important(el, "opacity", "0");
+        important(el, "pointer-events", "none");
+
+        return makeHtmlGuest(overlay, guestName);
+    }
+
+    function makeSvgGuest(el, guestName) {
+        const lines = splitBalanced(guestName);
+        const longName = guestName.length > 26;
+        const doc = el.ownerDocument;
+
+        important(
+            el,
+            "font-family",
+            '"Cormorant Garamond", Georgia, "Times New Roman", serif'
+        );
+        important(el, "font-style", "normal");
+        important(el, "font-weight", "600");
+        important(el, "font-size", longName ? "18.5px" : "21px");
+        important(el, "text-anchor", "middle");
+
+        const x =
+            el.getAttribute("x") ||
+            "50%";
+
+        el.textContent = "";
+
+        lines.forEach(function (line, index) {
+            const tspan = doc.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "tspan"
+            );
+
+            tspan.setAttribute("x", x);
+            tspan.setAttribute("dy", index === 0 ? "0" : "18");
+            tspan.textContent = line;
+
+            el.appendChild(tspan);
+        });
+
+        return true;
+    }
+
+    function renderGuest(el, guestName) {
+        if (!el) return false;
+
+        const tag = String(el.tagName || "").toLowerCase();
+        const ns = String(el.namespaceURI || "");
+
+        if (tag === "input" || tag === "textarea") {
+            return makeInputGuest(el, guestName);
+        }
+
+        if (ns.includes("svg") || tag === "text" || tag === "tspan") {
+            return makeSvgGuest(el, guestName);
+        }
+
+        return makeHtmlGuest(el, guestName);
+    }
+
+    function patchDocument(doc, guestName) {
+        if (!doc || !doc.body) return false;
+
+        injectFont(doc);
+
+        const el = findGuestElement(doc, guestName);
+
+        if (!el) return false;
+
+        return renderGuest(el, guestName);
+    }
+
+    /*
+      Hàm public để cover-shell-runtime gọi NGAY KHI iframe load.
+    */
+    window.patchCoverGuestV49 = function (frame, guestName) {
+        if (!frame || !guestName) return;
+
+        let doc;
+
+        try {
+            doc =
+                frame.contentDocument ||
+                (frame.contentWindow && frame.contentWindow.document);
+        } catch (e) {
+            console.warn("[Cover Guest V49] iframe khác origin:", e);
+            return;
+        }
+
+        if (!doc) return;
+
+        let working = false;
+
+        function apply() {
+            if (working) return;
+            working = true;
+
+            try {
+                patchDocument(doc, guestName);
+            } finally {
+                working = false;
+            }
+        }
+
+        apply();
+        setTimeout(apply, 60);
+        setTimeout(apply, 180);
+        setTimeout(apply, 420);
+        setTimeout(apply, 850);
+        setTimeout(apply, 1500);
+
+        if (doc.fonts && doc.fonts.ready) {
+            doc.fonts.ready.then(apply).catch(function () {});
+        }
+
+        /*
+          Nếu cover.html ghi lại tên sau đó,
+          tự sửa lại mà không cần reload trang cha.
+        */
+        let queued = false;
+
+        const observer = new MutationObserver(function () {
+            if (queued) return;
+
+            queued = true;
+
+            requestAnimationFrame(function () {
+                queued = false;
+                apply();
+            });
+        });
+
+        if (doc.body) {
+            observer.observe(doc.body, {
+                subtree: true,
+                childList: true,
+                characterData: true,
+                attributes: false
+            });
+        }
+    };
+})();
+</script>
+<!-- COVER_GUEST_V49_END -->
+
 <script id="cover-shell-runtime">
 (function(){
     "use strict";
@@ -2945,6 +3439,21 @@ input, textarea, select{
 
         if(frame){
             const coverParams = new URLSearchParams();
+            const coverGuestName =
+                params.get("guest") ||
+                params.get("khach") ||
+                params.get("to") ||
+                "";
+
+            /*
+              V49: listener được gắn TRƯỚC khi set frame.src,
+              vì vậy không còn race condition như patch cuối trang.
+            */
+            if(coverGuestName && window.patchCoverGuestV49){
+                frame.addEventListener("load", function(){
+                    window.patchCoverGuestV49(frame, coverGuestName);
+                });
+            }
 
             // Chuyển tiếp cả thông tin khách và chế độ xem trước sang cover iframe.
             // Nếu không có preview=1, cover.html sẽ chỉ đọc config.js thật.
@@ -3283,337 +3792,5 @@ input, textarea, select{
 <script src="firebase-config.js?v=40"></script>
 <script type="module" src="rsvp-firebase.js?v=40"></script>
 <!-- FIREBASE_RSVP_V37_END -->
-<!-- COVER_GUEST_INLINE_V48_START -->
-<script id="cover-guest-inline-v48">
-/* =========================================================
-   V47 — COVER GUEST NAME FIX
-   Chạy ở index.html (trang cha), sau đó chỉnh trực tiếp
-   phần tên khách bên trong iframe #wedding-cover-frame.
-
-   Mục tiêu:
-   - đổi font chữ tên khách;
-   - tên dài tự xuống tối đa 2 dòng;
-   - không phụ thuộc class/id cũ của cover.html;
-   - hỗ trợ ?guest=, ?khach=, ?to=.
-   ========================================================= */
-
-(function () {
-  "use strict";
-
-  const params = new URLSearchParams(window.location.search);
-
-  function clean(value) {
-    return String(value || "")
-      .replace(/\+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  const guestName = clean(
-    params.get("guest") ||
-    params.get("khach") ||
-    params.get("to") ||
-    ""
-  );
-
-  if (!guestName) return;
-
-  function norm(value) {
-    return clean(value)
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-  }
-
-  function splitBalanced(name) {
-    const words = clean(name).split(" ").filter(Boolean);
-
-    // Tên ngắn: giữ 1 dòng.
-    if (words.length <= 3 && name.length <= 20) {
-      return [name];
-    }
-
-    if (words.length < 2) return [name];
-
-    let best = null;
-
-    for (let i = 1; i < words.length; i++) {
-      const line1 = words.slice(0, i).join(" ");
-      const line2 = words.slice(i).join(" ");
-
-      const diff = Math.abs(line1.length - line2.length);
-
-      // Không muốn một dòng chỉ có 1–2 ký tự.
-      const shortPenalty =
-        (line1.length < 5 ? 20 : 0) +
-        (line2.length < 5 ? 20 : 0);
-
-      const score = diff + shortPenalty;
-
-      if (!best || score < best.score) {
-        best = { line1, line2, score };
-      }
-    }
-
-    return best ? [best.line1, best.line2] : [name];
-  }
-
-  function injectFontAndStyle(doc) {
-    if (!doc || !doc.head) return;
-
-    if (!doc.getElementById("guest-font-v47")) {
-      const font = doc.createElement("link");
-      font.id = "guest-font-v47";
-      font.rel = "stylesheet";
-      font.href =
-        "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap";
-      doc.head.appendChild(font);
-    }
-
-    if (!doc.getElementById("guest-style-v47")) {
-      const style = doc.createElement("style");
-      style.id = "guest-style-v47";
-      style.textContent = `
-        /*
-         Tên khách trong ô "TRÂN TRỌNG KÍNH MỜI".
-         Dùng selector class do JS V47 gắn trực tiếp vào đúng element.
-        */
-        .cover-guest-v47,
-        .cover-guest-v47 * {
-          font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif !important;
-          font-style: normal !important;
-          text-transform: none !important;
-        }
-
-        .cover-guest-v47 {
-          box-sizing: border-box !important;
-          display: block !important;
-
-          width: 180px !important;
-          max-width: 180px !important;
-          min-height: 22px !important;
-          margin-left: auto !important;
-          margin-right: auto !important;
-          padding: 0 3px !important;
-
-          font-size: 22px !important;
-          font-weight: 600 !important;
-          line-height: 0.98 !important;
-          letter-spacing: 0.15px !important;
-
-          text-align: center !important;
-          white-space: normal !important;
-          overflow: visible !important;
-          text-overflow: clip !important;
-          word-break: normal !important;
-          overflow-wrap: normal !important;
-        }
-
-        .cover-guest-v47 .cover-guest-line-v47 {
-          display: block !important;
-          width: 100% !important;
-          min-height: 21px !important;
-          white-space: nowrap !important;
-          text-align: center !important;
-        }
-
-        .cover-guest-v47.cover-guest-long-v47 {
-          font-size: 20px !important;
-          line-height: 0.96 !important;
-        }
-
-        @media (max-width: 380px) {
-          .cover-guest-v47 {
-            width: 174px !important;
-            max-width: 174px !important;
-            font-size: 21px !important;
-          }
-
-          .cover-guest-v47.cover-guest-long-v47 {
-            font-size: 19px !important;
-          }
-        }
-      `;
-      doc.head.appendChild(style);
-    }
-  }
-
-  function findGuestElement(doc) {
-    if (!doc || !doc.body) return null;
-
-    const wanted = norm(guestName);
-
-    // 1) Các id/class có thể có.
-    const selectors = [
-      "#guestName",
-      "#guest-name",
-      "#coverGuestName",
-      "#cover-guest-name",
-      ".guest-name",
-      ".cover-guest-name",
-      "[data-guest-name]"
-    ];
-
-    for (const selector of selectors) {
-      const el = doc.querySelector(selector);
-      if (el) return el;
-    }
-
-    // 2) Tìm element lá có text đúng bằng tên khách.
-    const all = Array.from(
-      doc.querySelectorAll(
-        "div,span,p,h1,h2,h3,h4,strong,em,i"
-      )
-    );
-
-    for (const el of all) {
-      if (el.children.length > 0) continue;
-
-      const text = norm(el.textContent);
-
-      if (text === wanted) {
-        return el;
-      }
-    }
-
-    // 3) Nếu code cover đang cắt/biến đổi text, tìm element
-    // có phần lớn nội dung trùng với tên khách.
-    const guestWords = wanted.split(" ").filter(Boolean);
-
-    let best = null;
-
-    for (const el of all) {
-      if (el.children.length > 0) continue;
-
-      const text = norm(el.textContent);
-      if (!text || text.length < 3) continue;
-
-      let hits = 0;
-      guestWords.forEach((word) => {
-        if (text.includes(word)) hits++;
-      });
-
-      if (hits >= Math.min(2, guestWords.length)) {
-        if (!best || hits > best.hits) {
-          best = { el, hits };
-        }
-      }
-    }
-
-    return best ? best.el : null;
-  }
-
-  function renderGuest(el) {
-    if (!el) return false;
-
-    const lines = splitBalanced(guestName);
-    const signature = lines.join("|");
-
-    // Element đúng nhưng cover script có thể render lại text;
-    // chỉ bỏ qua nếu DOM V47 vẫn còn nguyên.
-    if (
-      el.dataset.coverGuestV47 === signature &&
-      el.querySelector(".cover-guest-line-v47")
-    ) {
-      return true;
-    }
-
-    el.classList.add("cover-guest-v47");
-    el.classList.toggle(
-      "cover-guest-long-v47",
-      guestName.length > 24
-    );
-
-    el.dataset.coverGuestV47 = signature;
-
-    el.replaceChildren();
-
-    lines.forEach((line) => {
-      const span = el.ownerDocument.createElement("span");
-      span.className = "cover-guest-line-v47";
-      span.textContent = line;
-      el.appendChild(span);
-    });
-
-    return true;
-  }
-
-  function patchFrame(frame) {
-    if (!frame) return;
-
-    let doc;
-
-    try {
-      doc = frame.contentDocument || frame.contentWindow.document;
-    } catch (e) {
-      console.warn("[Cover Guest V47] Không truy cập được iframe:", e);
-      return;
-    }
-
-    if (!doc || !doc.body) return;
-
-    injectFontAndStyle(doc);
-
-    function apply() {
-      const el = findGuestElement(doc);
-      if (el) {
-        renderGuest(el);
-        return true;
-      }
-      return false;
-    }
-
-    // Cover có thể gán tên khách sau khi tải.
-    apply();
-    setTimeout(apply, 80);
-    setTimeout(apply, 250);
-    setTimeout(apply, 600);
-    setTimeout(apply, 1200);
-
-    if (doc.fonts && doc.fonts.ready) {
-      doc.fonts.ready.then(apply).catch(() => {});
-    }
-
-    // Nếu code cover render lại tên, tự áp lại V47.
-    const observer = new MutationObserver(() => {
-      requestAnimationFrame(apply);
-    });
-
-    observer.observe(doc.body, {
-      subtree: true,
-      childList: true,
-      characterData: true
-    });
-  }
-
-  function init() {
-    const frame = document.getElementById("wedding-cover-frame");
-
-    if (!frame) {
-      console.warn("[Cover Guest V47] Không tìm thấy #wedding-cover-frame");
-      return;
-    }
-
-    frame.addEventListener("load", () => patchFrame(frame));
-
-    // Nếu iframe đã load trước script V47.
-    try {
-      if (
-        frame.contentDocument &&
-        frame.contentDocument.readyState !== "loading"
-      ) {
-        patchFrame(frame);
-      }
-    } catch (e) {}
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
-  } else {
-    init();
-  }
-})();
-</script>
-<!-- COVER_GUEST_INLINE_V48_END -->
 </body>
 </html>
