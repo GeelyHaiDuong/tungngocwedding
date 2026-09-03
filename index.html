@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta name="hero-video-version" content="v44">
-    <meta name="cover-guest-version" content="v50">
+    <meta name="cover-guest-version" content="v51">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -2903,9 +2903,8 @@ input, textarea, select{
 </script>
     <script src="customize-family-v28.js?v=family-parents-v28"></script>
 
-<!-- COVER_GUEST_V50_START -->
-<!-- V50: sửa xuống dòng thật cho tên khách trong SVG/text của Cover. -->
-<script id="cover-guest-v50">
+<!-- COVER_GUEST_V51_START -->
+<script id="cover-guest-v51">
 (function () {
     "use strict";
 
@@ -2930,9 +2929,7 @@ input, textarea, select{
             return [name];
         }
 
-        if (words.length < 2) {
-            return [name];
-        }
+        if (words.length < 2) return [name];
 
         let best = null;
 
@@ -2946,24 +2943,19 @@ input, textarea, select{
             if (b.length < 5) score += 20;
 
             if (!best || score < best.score) {
-                best = { a: a, b: b, score: score };
+                best = { a, b, score };
             }
         }
 
         return best ? [best.a, best.b] : [name];
     }
 
-    function important(el, prop, value) {
-        if (!el || !el.style) return;
-        el.style.setProperty(prop, value, "important");
-    }
-
     function injectFont(doc) {
         if (!doc || !doc.head) return;
 
-        if (!doc.getElementById("cover-guest-font-v50")) {
+        if (!doc.getElementById("cover-guest-font-v51")) {
             const link = doc.createElement("link");
-            link.id = "cover-guest-font-v50";
+            link.id = "cover-guest-font-v51";
             link.rel = "stylesheet";
             link.href =
                 "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap";
@@ -2971,7 +2963,11 @@ input, textarea, select{
         }
     }
 
-    function findByKnownSelectors(doc) {
+    function findGuestElement(doc, guestName) {
+        if (!doc || !doc.body) return null;
+
+        const wanted = norm(guestName);
+
         const selectors = [
             "#guestName",
             "#guest-name",
@@ -2989,74 +2985,44 @@ input, textarea, select{
             if (el) return el;
         }
 
-        return null;
-    }
-
-    function findInputByValue(doc, guestName) {
-        const wanted = norm(guestName);
-
-        for (const el of doc.querySelectorAll("input,textarea")) {
-            if (norm(el.value) === wanted) {
-                return el;
-            }
-        }
-
-        return null;
-    }
-
-    function findExactTextElement(doc, guestName) {
-        const wanted = norm(guestName);
         const candidates = [];
 
-        /*
-          Dùng "*" thay vì chỉ div/span.
-          Như vậy nếu cover dùng thẻ lạ hoặc SVG text thì vẫn tìm thấy.
-        */
         for (const el of doc.querySelectorAll("*")) {
+            const tag = String(el.tagName || "").toLowerCase();
+
             if (
-                el.tagName === "SCRIPT" ||
-                el.tagName === "STYLE" ||
-                el.tagName === "LINK" ||
-                el.tagName === "META"
+                tag === "script" ||
+                tag === "style" ||
+                tag === "link" ||
+                tag === "meta"
             ) {
                 continue;
             }
 
-            const text = norm(el.textContent);
-
-            if (text === wanted) {
-                const childCount = el.children ? el.children.length : 0;
+            if (norm(el.textContent) === wanted) {
                 const rect = el.getBoundingClientRect
                     ? el.getBoundingClientRect()
                     : { width: 9999, height: 9999 };
 
                 candidates.push({
-                    el: el,
-                    childCount: childCount,
+                    el,
+                    children: el.children ? el.children.length : 0,
                     area: Math.max(1, rect.width * rect.height)
                 });
             }
         }
 
-        if (!candidates.length) return null;
+        if (candidates.length) {
+            candidates.sort(function (a, b) {
+                if (a.children !== b.children) {
+                    return a.children - b.children;
+                }
 
-        /*
-          Ưu tiên phần tử lá và vùng nhỏ nhất,
-          tránh bắt nhầm cả container chứa title + tên khách.
-        */
-        candidates.sort(function (a, b) {
-            if (a.childCount !== b.childCount) {
-                return a.childCount - b.childCount;
-            }
+                return a.area - b.area;
+            });
 
-            return a.area - b.area;
-        });
-
-        return candidates[0].el;
-    }
-
-    function findByTextNode(doc, guestName) {
-        const wanted = norm(guestName);
+            return candidates[0].el;
+        }
 
         const walker = doc.createTreeWalker(
             doc.body,
@@ -3074,335 +3040,103 @@ input, textarea, select{
         return null;
     }
 
-    function findNearInvitationTitle(doc, guestName) {
-        const titleWanted = norm("TRÂN TRỌNG KÍNH MỜI");
-        const guestWanted = norm(guestName);
-        const guestWords = guestWanted.split(" ").filter(Boolean);
+    function hideOriginal(el) {
+        if (!el || !el.style) return;
 
-        const all = Array.from(doc.querySelectorAll("*"));
-
-        const titleEl = all.find(function (el) {
-            return norm(el.textContent) === titleWanted;
-        });
-
-        if (!titleEl) return null;
-
-        let box = titleEl;
-
-        for (let level = 0; level < 5 && box; level++, box = box.parentElement) {
-            const candidates = Array.from(box.querySelectorAll("*"))
-                .filter(function (el) {
-                    if (el === titleEl) return false;
-
-                    const text = norm(el.textContent);
-
-                    if (!text || text === titleWanted) return false;
-                    if (text.length > guestWanted.length + 15) return false;
-
-                    let hits = 0;
-
-                    guestWords.forEach(function (word) {
-                        if (text.includes(word)) hits++;
-                    });
-
-                    return hits >= Math.min(2, guestWords.length);
-                })
-                .sort(function (a, b) {
-                    return a.querySelectorAll("*").length -
-                           b.querySelectorAll("*").length;
-                });
-
-            if (candidates.length) {
-                return candidates[0];
-            }
-        }
-
-        return null;
+        el.style.setProperty("visibility", "hidden", "important");
+        el.style.setProperty("opacity", "0", "important");
     }
 
-    function findGuestElement(doc, guestName) {
-        return (
-            findByKnownSelectors(doc) ||
-            findInputByValue(doc, guestName) ||
-            findExactTextElement(doc, guestName) ||
-            findByTextNode(doc, guestName) ||
-            findNearInvitationTitle(doc, guestName)
-        );
-    }
+    function positionOverlay(original, overlay, lines, guestName) {
+        const rect = original.getBoundingClientRect();
 
-    function makeHtmlGuest(el, guestName) {
-        const lines = splitBalanced(guestName);
-        const longName = guestName.length > 26;
+        if (!rect || rect.width <= 0 || rect.height <= 0) return;
 
-        /*
-          Dùng inline !important để thắng cả CSS rất mạnh của cover cũ.
-          Đây là khác biệt chính so với V47/V48.
-        */
-        important(
-            el,
+        const twoLines = lines.length > 1;
+        const width = Math.max(174, Math.min(190, rect.width + 12));
+        const left = rect.left + (rect.width - width) / 2;
+        const top = rect.top + (twoLines ? -8 : 0);
+
+        overlay.style.setProperty("position", "fixed", "important");
+        overlay.style.setProperty("left", left + "px", "important");
+        overlay.style.setProperty("top", top + "px", "important");
+        overlay.style.setProperty("width", width + "px", "important");
+        overlay.style.setProperty("height", twoLines ? "40px" : "22px", "important");
+
+        overlay.style.setProperty("z-index", "2147483647", "important");
+        overlay.style.setProperty("pointer-events", "none", "important");
+        overlay.style.setProperty("overflow", "visible", "important");
+
+        overlay.style.setProperty(
             "font-family",
-            '"Cormorant Garamond", Georgia, "Times New Roman", serif'
+            '"Cormorant Garamond", Georgia, "Times New Roman", serif',
+            "important"
         );
-        important(el, "font-style", "normal");
-        important(el, "font-weight", "600");
-        important(el, "font-size", longName ? "18.5px" : "21px");
-        important(el, "line-height", "18px");
-        important(el, "letter-spacing", "0.1px");
-        important(el, "text-align", "center");
-        important(el, "text-transform", "none");
-
-        important(el, "box-sizing", "border-box");
-        important(el, "width", "174px");
-        important(el, "max-width", "174px");
-        important(el, "min-height", lines.length > 1 ? "38px" : "22px");
-        important(el, "height", "auto");
-        important(el, "padding", "0 2px");
-        important(el, "margin-left", "auto");
-        important(el, "margin-right", "auto");
-
-        important(el, "white-space", "normal");
-        important(el, "word-break", "normal");
-        important(el, "overflow-wrap", "normal");
-        important(el, "overflow", "visible");
-        important(el, "text-overflow", "clip");
-
-        const signature = lines.join("|");
-
-        if (
-            el.dataset &&
-            el.dataset.coverGuestV50 === signature &&
-            el.querySelector &&
-            el.querySelector(".cover-guest-line-v50")
-        ) {
-            return true;
-        }
-
-        if (el.dataset) {
-            el.dataset.coverGuestV50 = signature;
-        }
-
-        el.replaceChildren();
-
-        lines.forEach(function (line) {
-            const span = el.ownerDocument.createElement("span");
-            span.className = "cover-guest-line-v50";
-            span.textContent = line;
-
-            important(span, "display", "block");
-            important(span, "float", "none");
-            important(span, "clear", "both");
-            important(span, "width", "100%");
-            important(span, "height", "18px");
-            important(span, "line-height", "18px");
-            important(span, "white-space", "nowrap");
-            important(span, "text-align", "center");
-            important(
-                span,
-                "font-family",
-                '"Cormorant Garamond", Georgia, "Times New Roman", serif'
-            );
-            important(span, "font-size", "inherit");
-            important(span, "font-weight", "600");
-            important(span, "font-style", "normal");
-
-            el.appendChild(span);
-        });
-
-        /*
-          LadiPage thường khóa chiều cao ở div cha.
-          Mở vùng chứa vừa đủ để dòng thứ 2 không bị cắt.
-        */
-        let parent = el.parentElement;
-
-        for (let i = 0; i < 3 && parent; i++, parent = parent.parentElement) {
-            important(parent, "overflow", "visible");
-
-            if (
-                parent.classList &&
-                (
-                    parent.classList.contains("ladi-element") ||
-                    parent.classList.contains("ladi-headline")
-                )
-            ) {
-                important(
-                    parent,
-                    "min-height",
-                    lines.length > 1 ? "40px" : "23px"
-                );
-                important(parent, "height", "auto");
-                break;
-            }
-        }
-
-        return true;
+        overlay.style.setProperty(
+            "font-size",
+            guestName.length > 27 ? "18px" : "19.5px",
+            "important"
+        );
+        overlay.style.setProperty("font-weight", "600", "important");
+        overlay.style.setProperty("font-style", "normal", "important");
+        overlay.style.setProperty("line-height", "18px", "important");
+        overlay.style.setProperty("letter-spacing", "0.1px", "important");
+        overlay.style.setProperty("text-align", "center", "important");
+        overlay.style.setProperty("white-space", "normal", "important");
+        overlay.style.setProperty("color", "rgb(20,20,20)", "important");
     }
 
-    function makeInputGuest(el, guestName) {
-        /*
-          Input không thể xuống dòng.
-          Tạo một div thay thế ngay trên vị trí input.
-        */
-        const doc = el.ownerDocument;
-        const parent = el.parentElement;
+    function renderOverlay(doc, original, guestName) {
+        if (!doc || !original) return false;
 
-        if (!parent) return false;
+        const lines = splitBalanced(guestName);
 
-        let overlay = parent.querySelector(".cover-guest-input-overlay-v50");
+        hideOriginal(original);
+
+        let overlay = doc.getElementById("cover-guest-overlay-v51");
 
         if (!overlay) {
             overlay = doc.createElement("div");
-            overlay.className = "cover-guest-input-overlay-v50";
-            parent.appendChild(overlay);
+            overlay.id = "cover-guest-overlay-v51";
+            overlay.setAttribute("aria-label", guestName);
+            doc.body.appendChild(overlay);
         }
 
-        important(el, "opacity", "0");
-        important(el, "pointer-events", "none");
+        const signature = lines.join("|");
 
-        return makeHtmlGuest(overlay, guestName);
-    }
+        if (overlay.dataset.signature !== signature) {
+            overlay.dataset.signature = signature;
+            overlay.replaceChildren();
 
-    function makeSvgGuest(el, guestName) {
-        const lines = splitBalanced(guestName);
-        const longName = guestName.length > 26;
-        const doc = el.ownerDocument;
+            lines.forEach(function (line) {
+                const row = doc.createElement("div");
+                row.className = "cover-guest-row-v51";
+                row.textContent = line;
 
-        /*
-          V50 FIX:
-          Nếu element tìm được là <tspan>, không tạo <tspan> lồng bên trong.
-          Luôn render các dòng thành các <tspan> sibling trực tiếp của <text>.
-        */
-        let textEl = el;
-
-        const tag = String(el.tagName || "").toLowerCase();
-
-        if (tag === "tspan") {
-            const parentText = el.closest ? el.closest("text") : null;
-            if (parentText) {
-                textEl = parentText;
-            }
-        }
-
-        const originalTspan =
-            tag === "tspan"
-                ? el
-                : (textEl.querySelector ? textEl.querySelector("tspan") : null);
-
-        important(
-            textEl,
-            "font-family",
-            '"Cormorant Garamond", Georgia, "Times New Roman", serif'
-        );
-        important(textEl, "font-style", "normal");
-        important(textEl, "font-weight", "600");
-        important(textEl, "font-size", longName ? "18.5px" : "20px");
-        important(textEl, "text-anchor", "middle");
-
-        const x =
-            (originalTspan && originalTspan.getAttribute("x")) ||
-            textEl.getAttribute("x") ||
-            "50%";
-
-        const yRaw =
-            (originalTspan && originalTspan.getAttribute("y")) ||
-            textEl.getAttribute("y") ||
-            "";
-
-        let numericY = null;
-
-        if (yRaw && /^-?\d+(?:\.\d+)?$/.test(String(yRaw).trim())) {
-            numericY = parseFloat(yRaw);
-        }
-
-        textEl.textContent = "";
-
-        if (lines.length === 1) {
-            const tspan = doc.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "tspan"
-            );
-
-            tspan.setAttribute("x", x);
-
-            if (numericY !== null) {
-                tspan.setAttribute("y", String(numericY));
-            } else {
-                tspan.setAttribute("dy", "0");
-            }
-
-            tspan.textContent = lines[0];
-            textEl.appendChild(tspan);
-            return true;
-        }
-
-        lines.forEach(function (line, index) {
-            const tspan = doc.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "tspan"
-            );
-
-            tspan.setAttribute("x", x);
-
-            if (numericY !== null) {
-                tspan.setAttribute(
-                    "y",
-                    String(numericY + (index === 0 ? -8 : 11))
+                row.style.setProperty("display", "block", "important");
+                row.style.setProperty("width", "100%", "important");
+                row.style.setProperty("height", "18px", "important");
+                row.style.setProperty("line-height", "18px", "important");
+                row.style.setProperty("white-space", "nowrap", "important");
+                row.style.setProperty("text-align", "center", "important");
+                row.style.setProperty(
+                    "font-family",
+                    '"Cormorant Garamond", Georgia, "Times New Roman", serif',
+                    "important"
                 );
-            } else {
-                tspan.setAttribute(
-                    "dy",
-                    index === 0 ? "-8" : "19"
-                );
-            }
 
-            important(
-                tspan,
-                "font-family",
-                '"Cormorant Garamond", Georgia, "Times New Roman", serif'
-            );
-            important(tspan, "font-style", "normal");
-            important(tspan, "font-weight", "600");
-            important(tspan, "font-size", "inherit");
+                overlay.appendChild(row);
+            });
+        }
 
-            tspan.textContent = line;
-            textEl.appendChild(tspan);
-        });
+        positionOverlay(original, overlay, lines, guestName);
 
         return true;
     }
 
-    function renderGuest(el, guestName) {
-        if (!el) return false;
+    window.patchCoverGuestV51 = function (frame, guestName) {
+        guestName = clean(guestName);
 
-        const tag = String(el.tagName || "").toLowerCase();
-        const ns = String(el.namespaceURI || "");
-
-        if (tag === "input" || tag === "textarea") {
-            return makeInputGuest(el, guestName);
-        }
-
-        if (ns.includes("svg") || tag === "text" || tag === "tspan") {
-            return makeSvgGuest(el, guestName);
-        }
-
-        return makeHtmlGuest(el, guestName);
-    }
-
-    function patchDocument(doc, guestName) {
-        if (!doc || !doc.body) return false;
-
-        injectFont(doc);
-
-        const el = findGuestElement(doc, guestName);
-
-        if (!el) return false;
-
-        return renderGuest(el, guestName);
-    }
-
-    /*
-      Hàm public để cover-shell-runtime gọi NGAY KHI iframe load.
-    */
-    window.patchCoverGuestV50 = function (frame, guestName) {
         if (!frame || !guestName) return;
 
         let doc;
@@ -3412,22 +3146,32 @@ input, textarea, select{
                 frame.contentDocument ||
                 (frame.contentWindow && frame.contentWindow.document);
         } catch (e) {
-            console.warn("[Cover Guest V50] iframe khác origin:", e);
+            console.warn("[Cover Guest V51] Không truy cập được iframe:", e);
             return;
         }
 
-        if (!doc) return;
+        if (!doc || !doc.body) return;
 
-        let working = false;
+        injectFont(doc);
+
+        let currentOriginal = null;
+        let applying = false;
 
         function apply() {
-            if (working) return;
-            working = true;
+            if (applying) return;
+            applying = true;
 
             try {
-                patchDocument(doc, guestName);
+                const found =
+                    findGuestElement(doc, guestName) ||
+                    currentOriginal;
+
+                if (!found) return;
+
+                currentOriginal = found;
+                renderOverlay(doc, currentOriginal, guestName);
             } finally {
-                working = false;
+                applying = false;
             }
         }
 
@@ -3435,17 +3179,17 @@ input, textarea, select{
         setTimeout(apply, 60);
         setTimeout(apply, 180);
         setTimeout(apply, 420);
-        setTimeout(apply, 850);
-        setTimeout(apply, 1500);
+        setTimeout(apply, 800);
+        setTimeout(apply, 1400);
 
         if (doc.fonts && doc.fonts.ready) {
             doc.fonts.ready.then(apply).catch(function () {});
         }
 
-        /*
-          Nếu cover.html ghi lại tên sau đó,
-          tự sửa lại mà không cần reload trang cha.
-        */
+        try {
+            frame.contentWindow.addEventListener("resize", apply);
+        } catch (e) {}
+
         let queued = false;
 
         const observer = new MutationObserver(function () {
@@ -3459,18 +3203,15 @@ input, textarea, select{
             });
         });
 
-        if (doc.body) {
-            observer.observe(doc.body, {
-                subtree: true,
-                childList: true,
-                characterData: true,
-                attributes: false
-            });
-        }
+        observer.observe(doc.body, {
+            subtree: true,
+            childList: true,
+            characterData: true
+        });
     };
 })();
 </script>
-<!-- COVER_GUEST_V50_END -->
+<!-- COVER_GUEST_V51_END -->
 
 <script id="cover-shell-runtime">
 (function(){
@@ -3520,13 +3261,10 @@ input, textarea, select{
                 params.get("to") ||
                 "";
 
-            /*
-              V50: listener được gắn TRƯỚC khi set frame.src,
-              vì vậy không còn race condition như patch cuối trang.
-            */
-            if(coverGuestName && window.patchCoverGuestV50){
+            // V51: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
+            if(coverGuestName && window.patchCoverGuestV51){
                 frame.addEventListener("load", function(){
-                    window.patchCoverGuestV50(frame, coverGuestName);
+                    window.patchCoverGuestV51(frame, coverGuestName);
                 });
             }
 
