@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta name="hero-video-version" content="v44">
-    <meta name="cover-guest-version" content="v52">
+    <meta name="cover-guest-version" content="v53">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -2903,9 +2903,10 @@ input, textarea, select{
 </script>
     <script src="customize-family-v28.js?v=family-parents-v28"></script>
 
-<!-- COVER_GUEST_V52_START -->
-<!-- V52: dùng lại font Quickpen cũ, giảm cỡ chữ và tự chia 2 dòng khi tên dài. -->
-<script id="cover-guest-v52">
+<!-- COVER_GUEST_V53_START -->
+<!-- V53: font Quickpen cũ, chữ lớn hơn; overlay neo theo tọa độ trang nên không trôi khi cuộn. -->
+<!-- V53: dùng lại font Quickpen cũ, giảm cỡ chữ và tự chia 2 dòng khi tên dài. -->
+<script id="cover-guest-v53">
 (function () {
     "use strict";
 
@@ -2927,7 +2928,7 @@ input, textarea, select{
         const words = clean(name).split(" ").filter(Boolean);
 
         /*
-          V52:
+          V53:
           - Tên <= 3 từ và <= 18 ký tự: giữ 1 dòng.
           - Từ 4 từ trở lên hoặc dài hơn 18 ký tự: tự chia 2 dòng cân đối.
         */
@@ -3057,14 +3058,27 @@ input, textarea, select{
 
         const twoLines = lines.length > 1;
         const width = Math.max(174, Math.min(190, rect.width + 12));
-        const left = rect.left + (rect.width - width) / 2;
-        const top = rect.top + (twoLines ? -4 : 0);
+        const left = rect.left + scrollX + (rect.width - width) / 2;
+        const scrollX =
+            (original.ownerDocument.defaultView &&
+             original.ownerDocument.defaultView.scrollX) || 0;
+        const scrollY =
+            (original.ownerDocument.defaultView &&
+             original.ownerDocument.defaultView.scrollY) || 0;
 
-        overlay.style.setProperty("position", "fixed", "important");
+        /*
+          V53 FIX:
+          Dùng tọa độ DOCUMENT + position:absolute.
+          V52 dùng position:fixed nên chữ đứng yên theo viewport,
+          trong khi Passport cuộn phía dưới -> nhìn như chữ bị trôi.
+        */
+        const top = rect.top + scrollY + (twoLines ? -5 : 0);
+
+        overlay.style.setProperty("position", "absolute", "important");
         overlay.style.setProperty("left", left + "px", "important");
         overlay.style.setProperty("top", top + "px", "important");
         overlay.style.setProperty("width", width + "px", "important");
-        overlay.style.setProperty("height", twoLines ? "34px" : "19px", "important");
+        overlay.style.setProperty("height", twoLines ? "40px" : "22px", "important");
 
         overlay.style.setProperty("z-index", "2147483647", "important");
         overlay.style.setProperty("pointer-events", "none", "important");
@@ -3077,12 +3091,12 @@ input, textarea, select{
         );
         overlay.style.setProperty(
             "font-size",
-            guestName.length > 27 ? "14.5px" : "16px",
+            guestName.length > 27 ? "18px" : "20px",
             "important"
         );
         overlay.style.setProperty("font-weight", "400", "important");
         overlay.style.setProperty("font-style", "normal", "important");
-        overlay.style.setProperty("line-height", "16px", "important");
+        overlay.style.setProperty("line-height", "19px", "important");
         overlay.style.setProperty("letter-spacing", "0.1px", "important");
         overlay.style.setProperty("text-align", "center", "important");
         overlay.style.setProperty("white-space", "normal", "important");
@@ -3096,11 +3110,11 @@ input, textarea, select{
 
         hideOriginal(original);
 
-        let overlay = doc.getElementById("cover-guest-overlay-v52");
+        let overlay = doc.getElementById("cover-guest-overlay-v53");
 
         if (!overlay) {
             overlay = doc.createElement("div");
-            overlay.id = "cover-guest-overlay-v52";
+            overlay.id = "cover-guest-overlay-v53";
             overlay.setAttribute("aria-label", guestName);
             doc.body.appendChild(overlay);
         }
@@ -3113,13 +3127,13 @@ input, textarea, select{
 
             lines.forEach(function (line) {
                 const row = doc.createElement("div");
-                row.className = "cover-guest-row-v52";
+                row.className = "cover-guest-row-v53";
                 row.textContent = line;
 
                 row.style.setProperty("display", "block", "important");
                 row.style.setProperty("width", "100%", "important");
-                row.style.setProperty("height", "16px", "important");
-                row.style.setProperty("line-height", "16px", "important");
+                row.style.setProperty("height", "19px", "important");
+                row.style.setProperty("line-height", "19px", "important");
                 row.style.setProperty("white-space", "nowrap", "important");
                 row.style.setProperty("text-align", "center", "important");
                 row.style.setProperty(
@@ -3138,7 +3152,7 @@ input, textarea, select{
         return true;
     }
 
-    window.patchCoverGuestV52 = function (frame, guestName) {
+    window.patchCoverGuestV53 = function (frame, guestName) {
         guestName = clean(guestName);
 
         if (!frame || !guestName) return;
@@ -3150,7 +3164,7 @@ input, textarea, select{
                 frame.contentDocument ||
                 (frame.contentWindow && frame.contentWindow.document);
         } catch (e) {
-            console.warn("[Cover Guest V52] Không truy cập được iframe:", e);
+            console.warn("[Cover Guest V53] Không truy cập được iframe:", e);
             return;
         }
 
@@ -3215,7 +3229,7 @@ input, textarea, select{
     };
 })();
 </script>
-<!-- COVER_GUEST_V52_END -->
+<!-- COVER_GUEST_V53_END -->
 
 <script id="cover-shell-runtime">
 (function(){
@@ -3265,10 +3279,10 @@ input, textarea, select{
                 params.get("to") ||
                 "";
 
-            // V52: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
-            if(coverGuestName && window.patchCoverGuestV52){
+            // V53: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
+            if(coverGuestName && window.patchCoverGuestV53){
                 frame.addEventListener("load", function(){
-                    window.patchCoverGuestV52(frame, coverGuestName);
+                    window.patchCoverGuestV53(frame, coverGuestName);
                 });
             }
 
