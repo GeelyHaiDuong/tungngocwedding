@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta name="hero-video-version" content="v44">
-    <meta name="cover-guest-version" content="v53">
+    <meta name="cover-guest-version" content="v54">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -2903,10 +2903,11 @@ input, textarea, select{
 </script>
     <script src="customize-family-v28.js?v=family-parents-v28"></script>
 
-<!-- COVER_GUEST_V53_START -->
-<!-- V53: font Quickpen cũ, chữ lớn hơn; overlay neo theo tọa độ trang nên không trôi khi cuộn. -->
-<!-- V53: dùng lại font Quickpen cũ, giảm cỡ chữ và tự chia 2 dòng khi tên dài. -->
-<script id="cover-guest-v53">
+<!-- COVER_GUEST_V54_START -->
+<!-- V54: sửa lỗi ReferenceError của V53 khiến tên khách bị ẩn nhưng overlay không hiện. -->
+<!-- V54: font Quickpen cũ, chữ lớn hơn; overlay neo theo tọa độ trang nên không trôi khi cuộn. -->
+<!-- V54: dùng lại font Quickpen cũ, giảm cỡ chữ và tự chia 2 dòng khi tên dài. -->
+<script id="cover-guest-v54">
 (function () {
     "use strict";
 
@@ -2928,7 +2929,7 @@ input, textarea, select{
         const words = clean(name).split(" ").filter(Boolean);
 
         /*
-          V53:
+          V54:
           - Tên <= 3 từ và <= 18 ký tự: giữ 1 dòng.
           - Từ 4 từ trở lên hoặc dài hơn 18 ký tự: tự chia 2 dòng cân đối.
         */
@@ -3054,31 +3055,42 @@ input, textarea, select{
     function positionOverlay(original, overlay, lines, guestName) {
         const rect = original.getBoundingClientRect();
 
-        if (!rect || rect.width <= 0 || rect.height <= 0) return;
+        if (!rect || rect.width <= 0 || rect.height <= 0) {
+            return false;
+        }
+
+        const win = original.ownerDocument.defaultView || window;
+        const scrollX = win.scrollX || win.pageXOffset || 0;
+        const scrollY = win.scrollY || win.pageYOffset || 0;
 
         const twoLines = lines.length > 1;
         const width = Math.max(174, Math.min(190, rect.width + 12));
-        const left = rect.left + scrollX + (rect.width - width) / 2;
-        const scrollX =
-            (original.ownerDocument.defaultView &&
-             original.ownerDocument.defaultView.scrollX) || 0;
-        const scrollY =
-            (original.ownerDocument.defaultView &&
-             original.ownerDocument.defaultView.scrollY) || 0;
 
         /*
-          V53 FIX:
-          Dùng tọa độ DOCUMENT + position:absolute.
-          V52 dùng position:fixed nên chữ đứng yên theo viewport,
-          trong khi Passport cuộn phía dưới -> nhìn như chữ bị trôi.
+          V54 FIX:
+          V53 tính "left" trước khi khai báo scrollX -> ReferenceError.
+          Vì tên gốc đã bị hide trước đó nên kết quả là tên khách biến mất.
+          V54 khai báo scrollX/scrollY trước, sau đó mới tính tọa độ.
         */
-        const top = rect.top + scrollY + (twoLines ? -5 : 0);
+        const left =
+            rect.left +
+            scrollX +
+            (rect.width - width) / 2;
+
+        const top =
+            rect.top +
+            scrollY +
+            (twoLines ? -5 : 0);
 
         overlay.style.setProperty("position", "absolute", "important");
         overlay.style.setProperty("left", left + "px", "important");
         overlay.style.setProperty("top", top + "px", "important");
         overlay.style.setProperty("width", width + "px", "important");
-        overlay.style.setProperty("height", twoLines ? "40px" : "22px", "important");
+        overlay.style.setProperty(
+            "height",
+            twoLines ? "40px" : "22px",
+            "important"
+        );
 
         overlay.style.setProperty("z-index", "2147483647", "important");
         overlay.style.setProperty("pointer-events", "none", "important");
@@ -3101,6 +3113,8 @@ input, textarea, select{
         overlay.style.setProperty("text-align", "center", "important");
         overlay.style.setProperty("white-space", "normal", "important");
         overlay.style.setProperty("color", "rgb(20,20,20)", "important");
+
+        return true;
     }
 
     function renderOverlay(doc, original, guestName) {
@@ -3108,13 +3122,11 @@ input, textarea, select{
 
         const lines = splitBalanced(guestName);
 
-        hideOriginal(original);
-
-        let overlay = doc.getElementById("cover-guest-overlay-v53");
+        let overlay = doc.getElementById("cover-guest-overlay-v54");
 
         if (!overlay) {
             overlay = doc.createElement("div");
-            overlay.id = "cover-guest-overlay-v53";
+            overlay.id = "cover-guest-overlay-v54";
             overlay.setAttribute("aria-label", guestName);
             doc.body.appendChild(overlay);
         }
@@ -3127,7 +3139,7 @@ input, textarea, select{
 
             lines.forEach(function (line) {
                 const row = doc.createElement("div");
-                row.className = "cover-guest-row-v53";
+                row.className = "cover-guest-row-v54";
                 row.textContent = line;
 
                 row.style.setProperty("display", "block", "important");
@@ -3147,12 +3159,25 @@ input, textarea, select{
             });
         }
 
-        positionOverlay(original, overlay, lines, guestName);
+        /*
+          Chỉ ẩn tên gốc SAU KHI overlay đã đặt vị trí thành công.
+          Nếu có lỗi tọa độ, tên gốc vẫn còn thay vì biến mất.
+        */
+        const positioned =
+            positionOverlay(original, overlay, lines, guestName);
+
+        if (!positioned) {
+            overlay.style.setProperty("display", "none", "important");
+            return false;
+        }
+
+        overlay.style.removeProperty("display");
+        hideOriginal(original);
 
         return true;
     }
 
-    window.patchCoverGuestV53 = function (frame, guestName) {
+    window.patchCoverGuestV54 = function (frame, guestName) {
         guestName = clean(guestName);
 
         if (!frame || !guestName) return;
@@ -3164,7 +3189,7 @@ input, textarea, select{
                 frame.contentDocument ||
                 (frame.contentWindow && frame.contentWindow.document);
         } catch (e) {
-            console.warn("[Cover Guest V53] Không truy cập được iframe:", e);
+            console.warn("[Cover Guest V54] Không truy cập được iframe:", e);
             return;
         }
 
@@ -3229,7 +3254,7 @@ input, textarea, select{
     };
 })();
 </script>
-<!-- COVER_GUEST_V53_END -->
+<!-- COVER_GUEST_V54_END -->
 
 <script id="cover-shell-runtime">
 (function(){
@@ -3279,10 +3304,10 @@ input, textarea, select{
                 params.get("to") ||
                 "";
 
-            // V53: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
-            if(coverGuestName && window.patchCoverGuestV53){
+            // V54: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
+            if(coverGuestName && window.patchCoverGuestV54){
                 frame.addEventListener("load", function(){
-                    window.patchCoverGuestV53(frame, coverGuestName);
+                    window.patchCoverGuestV54(frame, coverGuestName);
                 });
             }
 
