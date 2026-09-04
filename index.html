@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta name="hero-video-version" content="v44">
-    <meta name="cover-guest-version" content="v54">
+    <meta name="cover-guest-version" content="v55">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -993,7 +993,7 @@ input, textarea, select{
     width:54px;
     height:24px;
 
-    font-family:"IzlTbGlkZTAIFFaWNrcGVuLnRZg", "Brush Script MT", cursive;
+    font-family:"Dancing Script", "Segoe Script", cursive;
     font-size:22px;
     font-weight:400;
     line-height:24px;
@@ -2903,11 +2903,12 @@ input, textarea, select{
 </script>
     <script src="customize-family-v28.js?v=family-parents-v28"></script>
 
-<!-- COVER_GUEST_V54_START -->
-<!-- V54: sửa lỗi ReferenceError của V53 khiến tên khách bị ẩn nhưng overlay không hiện. -->
-<!-- V54: font Quickpen cũ, chữ lớn hơn; overlay neo theo tọa độ trang nên không trôi khi cuộn. -->
-<!-- V54: dùng lại font Quickpen cũ, giảm cỡ chữ và tự chia 2 dòng khi tên dài. -->
-<script id="cover-guest-v54">
+<!-- COVER_GUEST_V55_START -->
+<!-- V55: font viết tay hỗ trợ đầy đủ Tiếng Việt (Dancing Script), giữ tự xuống dòng và neo vị trí. -->
+<!-- V55: sửa lỗi ReferenceError của V53 khiến tên khách bị ẩn nhưng overlay không hiện. -->
+<!-- V55: font Quickpen cũ, chữ lớn hơn; overlay neo theo tọa độ trang nên không trôi khi cuộn. -->
+<!-- V55: dùng lại font Quickpen cũ, giảm cỡ chữ và tự chia 2 dòng khi tên dài. -->
+<script id="cover-guest-v55">
 (function () {
     "use strict";
 
@@ -2929,7 +2930,7 @@ input, textarea, select{
         const words = clean(name).split(" ").filter(Boolean);
 
         /*
-          V54:
+          V55:
           - Tên <= 3 từ và <= 18 ký tự: giữ 1 dòng.
           - Từ 4 từ trở lên hoặc dài hơn 18 ký tự: tự chia 2 dòng cân đối.
         */
@@ -2960,12 +2961,33 @@ input, textarea, select{
 
     function injectFont(doc) {
         /*
-          V52 dùng lại font gốc của Cover:
-          IzlTbGlkZTAIFFaWNrcGVuLnRZg = Quickpen.
-          Font này đã được cover.html load sẵn bằng @font-face,
-          nên không cần tải Google Fonts nữa.
+          V55:
+          Quickpen cũ không có đủ glyph Tiếng Việt nên trình duyệt
+          phải ghép/substitute ký tự, làm dấu và nét chữ không đồng nhất.
+          Dùng Dancing Script với subset Vietnamese để giữ phong cách
+          viết tay nhưng hiển thị đầy đủ dấu tiếng Việt.
         */
-        return;
+        if (!doc || !doc.head) return;
+
+        if (!doc.getElementById("cover-guest-font-v55")) {
+            const pre1 = doc.createElement("link");
+            pre1.rel = "preconnect";
+            pre1.href = "https://fonts.googleapis.com";
+            doc.head.appendChild(pre1);
+
+            const pre2 = doc.createElement("link");
+            pre2.rel = "preconnect";
+            pre2.href = "https://fonts.gstatic.com";
+            pre2.crossOrigin = "anonymous";
+            doc.head.appendChild(pre2);
+
+            const link = doc.createElement("link");
+            link.id = "cover-guest-font-v55";
+            link.rel = "stylesheet";
+            link.href =
+                "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&display=swap&subset=vietnamese";
+            doc.head.appendChild(link);
+        }
     }
 
     function findGuestElement(doc, guestName) {
@@ -3088,7 +3110,7 @@ input, textarea, select{
         overlay.style.setProperty("width", width + "px", "important");
         overlay.style.setProperty(
             "height",
-            twoLines ? "40px" : "22px",
+            twoLines ? "44px" : "24px",
             "important"
         );
 
@@ -3098,17 +3120,17 @@ input, textarea, select{
 
         overlay.style.setProperty(
             "font-family",
-            '"IzlTbGlkZTAIFFaWNrcGVuLnRZg", "Brush Script MT", cursive',
+            '"Dancing Script", "Segoe Script", cursive',
             "important"
         );
         overlay.style.setProperty(
             "font-size",
-            guestName.length > 27 ? "18px" : "20px",
+            guestName.length > 27 ? "19px" : "21px",
             "important"
         );
         overlay.style.setProperty("font-weight", "400", "important");
         overlay.style.setProperty("font-style", "normal", "important");
-        overlay.style.setProperty("line-height", "19px", "important");
+        overlay.style.setProperty("line-height", "21px", "important");
         overlay.style.setProperty("letter-spacing", "0.1px", "important");
         overlay.style.setProperty("text-align", "center", "important");
         overlay.style.setProperty("white-space", "normal", "important");
@@ -3122,11 +3144,11 @@ input, textarea, select{
 
         const lines = splitBalanced(guestName);
 
-        let overlay = doc.getElementById("cover-guest-overlay-v54");
+        let overlay = doc.getElementById("cover-guest-overlay-v55");
 
         if (!overlay) {
             overlay = doc.createElement("div");
-            overlay.id = "cover-guest-overlay-v54";
+            overlay.id = "cover-guest-overlay-v55";
             overlay.setAttribute("aria-label", guestName);
             doc.body.appendChild(overlay);
         }
@@ -3139,18 +3161,18 @@ input, textarea, select{
 
             lines.forEach(function (line) {
                 const row = doc.createElement("div");
-                row.className = "cover-guest-row-v54";
+                row.className = "cover-guest-row-v55";
                 row.textContent = line;
 
                 row.style.setProperty("display", "block", "important");
                 row.style.setProperty("width", "100%", "important");
-                row.style.setProperty("height", "19px", "important");
-                row.style.setProperty("line-height", "19px", "important");
+                row.style.setProperty("height", "21px", "important");
+                row.style.setProperty("line-height", "21px", "important");
                 row.style.setProperty("white-space", "nowrap", "important");
                 row.style.setProperty("text-align", "center", "important");
                 row.style.setProperty(
                     "font-family",
-                    '"IzlTbGlkZTAIFFaWNrcGVuLnRZg", "Brush Script MT", cursive',
+                    '"Dancing Script", "Segoe Script", cursive',
                     "important"
                 );
                 row.style.setProperty("font-weight", "400", "important");
@@ -3177,7 +3199,7 @@ input, textarea, select{
         return true;
     }
 
-    window.patchCoverGuestV54 = function (frame, guestName) {
+    window.patchCoverGuestV55 = function (frame, guestName) {
         guestName = clean(guestName);
 
         if (!frame || !guestName) return;
@@ -3189,7 +3211,7 @@ input, textarea, select{
                 frame.contentDocument ||
                 (frame.contentWindow && frame.contentWindow.document);
         } catch (e) {
-            console.warn("[Cover Guest V54] Không truy cập được iframe:", e);
+            console.warn("[Cover Guest V55] Không truy cập được iframe:", e);
             return;
         }
 
@@ -3254,7 +3276,7 @@ input, textarea, select{
     };
 })();
 </script>
-<!-- COVER_GUEST_V54_END -->
+<!-- COVER_GUEST_V55_END -->
 
 <script id="cover-shell-runtime">
 (function(){
@@ -3304,10 +3326,10 @@ input, textarea, select{
                 params.get("to") ||
                 "";
 
-            // V54: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
-            if(coverGuestName && window.patchCoverGuestV54){
+            // V55: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
+            if(coverGuestName && window.patchCoverGuestV55){
                 frame.addEventListener("load", function(){
-                    window.patchCoverGuestV54(frame, coverGuestName);
+                    window.patchCoverGuestV55(frame, coverGuestName);
                 });
             }
 
