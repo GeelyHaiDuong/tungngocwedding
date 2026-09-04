@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta name="hero-video-version" content="v44">
-    <meta name="cover-guest-version" content="v51">
+    <meta name="cover-guest-version" content="v52">
     <meta name="firebase-rsvp-version" content="v40">
     <meta name="wedding-ticket-fx-version" content="v36">
     <meta name="footer-card-version" content="v35">
@@ -2903,8 +2903,9 @@ input, textarea, select{
 </script>
     <script src="customize-family-v28.js?v=family-parents-v28"></script>
 
-<!-- COVER_GUEST_V51_START -->
-<script id="cover-guest-v51">
+<!-- COVER_GUEST_V52_START -->
+<!-- V52: dùng lại font Quickpen cũ, giảm cỡ chữ và tự chia 2 dòng khi tên dài. -->
+<script id="cover-guest-v52">
 (function () {
     "use strict";
 
@@ -2925,7 +2926,12 @@ input, textarea, select{
     function splitBalanced(name) {
         const words = clean(name).split(" ").filter(Boolean);
 
-        if (words.length <= 3 && name.length <= 21) {
+        /*
+          V52:
+          - Tên <= 3 từ và <= 18 ký tự: giữ 1 dòng.
+          - Từ 4 từ trở lên hoặc dài hơn 18 ký tự: tự chia 2 dòng cân đối.
+        */
+        if (words.length <= 3 && name.length <= 18) {
             return [name];
         }
 
@@ -2951,16 +2957,13 @@ input, textarea, select{
     }
 
     function injectFont(doc) {
-        if (!doc || !doc.head) return;
-
-        if (!doc.getElementById("cover-guest-font-v51")) {
-            const link = doc.createElement("link");
-            link.id = "cover-guest-font-v51";
-            link.rel = "stylesheet";
-            link.href =
-                "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap";
-            doc.head.appendChild(link);
-        }
+        /*
+          V52 dùng lại font gốc của Cover:
+          IzlTbGlkZTAIFFaWNrcGVuLnRZg = Quickpen.
+          Font này đã được cover.html load sẵn bằng @font-face,
+          nên không cần tải Google Fonts nữa.
+        */
+        return;
     }
 
     function findGuestElement(doc, guestName) {
@@ -3055,13 +3058,13 @@ input, textarea, select{
         const twoLines = lines.length > 1;
         const width = Math.max(174, Math.min(190, rect.width + 12));
         const left = rect.left + (rect.width - width) / 2;
-        const top = rect.top + (twoLines ? -8 : 0);
+        const top = rect.top + (twoLines ? -4 : 0);
 
         overlay.style.setProperty("position", "fixed", "important");
         overlay.style.setProperty("left", left + "px", "important");
         overlay.style.setProperty("top", top + "px", "important");
         overlay.style.setProperty("width", width + "px", "important");
-        overlay.style.setProperty("height", twoLines ? "40px" : "22px", "important");
+        overlay.style.setProperty("height", twoLines ? "34px" : "19px", "important");
 
         overlay.style.setProperty("z-index", "2147483647", "important");
         overlay.style.setProperty("pointer-events", "none", "important");
@@ -3069,17 +3072,17 @@ input, textarea, select{
 
         overlay.style.setProperty(
             "font-family",
-            '"Cormorant Garamond", Georgia, "Times New Roman", serif',
+            '"IzlTbGlkZTAIFFaWNrcGVuLnRZg", "Brush Script MT", cursive',
             "important"
         );
         overlay.style.setProperty(
             "font-size",
-            guestName.length > 27 ? "18px" : "19.5px",
+            guestName.length > 27 ? "14.5px" : "16px",
             "important"
         );
-        overlay.style.setProperty("font-weight", "600", "important");
+        overlay.style.setProperty("font-weight", "400", "important");
         overlay.style.setProperty("font-style", "normal", "important");
-        overlay.style.setProperty("line-height", "18px", "important");
+        overlay.style.setProperty("line-height", "16px", "important");
         overlay.style.setProperty("letter-spacing", "0.1px", "important");
         overlay.style.setProperty("text-align", "center", "important");
         overlay.style.setProperty("white-space", "normal", "important");
@@ -3093,11 +3096,11 @@ input, textarea, select{
 
         hideOriginal(original);
 
-        let overlay = doc.getElementById("cover-guest-overlay-v51");
+        let overlay = doc.getElementById("cover-guest-overlay-v52");
 
         if (!overlay) {
             overlay = doc.createElement("div");
-            overlay.id = "cover-guest-overlay-v51";
+            overlay.id = "cover-guest-overlay-v52";
             overlay.setAttribute("aria-label", guestName);
             doc.body.appendChild(overlay);
         }
@@ -3110,20 +3113,21 @@ input, textarea, select{
 
             lines.forEach(function (line) {
                 const row = doc.createElement("div");
-                row.className = "cover-guest-row-v51";
+                row.className = "cover-guest-row-v52";
                 row.textContent = line;
 
                 row.style.setProperty("display", "block", "important");
                 row.style.setProperty("width", "100%", "important");
-                row.style.setProperty("height", "18px", "important");
-                row.style.setProperty("line-height", "18px", "important");
+                row.style.setProperty("height", "16px", "important");
+                row.style.setProperty("line-height", "16px", "important");
                 row.style.setProperty("white-space", "nowrap", "important");
                 row.style.setProperty("text-align", "center", "important");
                 row.style.setProperty(
                     "font-family",
-                    '"Cormorant Garamond", Georgia, "Times New Roman", serif',
+                    '"IzlTbGlkZTAIFFaWNrcGVuLnRZg", "Brush Script MT", cursive',
                     "important"
                 );
+                row.style.setProperty("font-weight", "400", "important");
 
                 overlay.appendChild(row);
             });
@@ -3134,7 +3138,7 @@ input, textarea, select{
         return true;
     }
 
-    window.patchCoverGuestV51 = function (frame, guestName) {
+    window.patchCoverGuestV52 = function (frame, guestName) {
         guestName = clean(guestName);
 
         if (!frame || !guestName) return;
@@ -3146,7 +3150,7 @@ input, textarea, select{
                 frame.contentDocument ||
                 (frame.contentWindow && frame.contentWindow.document);
         } catch (e) {
-            console.warn("[Cover Guest V51] Không truy cập được iframe:", e);
+            console.warn("[Cover Guest V52] Không truy cập được iframe:", e);
             return;
         }
 
@@ -3211,7 +3215,7 @@ input, textarea, select{
     };
 })();
 </script>
-<!-- COVER_GUEST_V51_END -->
+<!-- COVER_GUEST_V52_END -->
 
 <script id="cover-shell-runtime">
 (function(){
@@ -3261,10 +3265,10 @@ input, textarea, select{
                 params.get("to") ||
                 "";
 
-            // V51: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
-            if(coverGuestName && window.patchCoverGuestV51){
+            // V52: gắn listener trước khi set src để không bỏ lỡ sự kiện load.
+            if(coverGuestName && window.patchCoverGuestV52){
                 frame.addEventListener("load", function(){
-                    window.patchCoverGuestV51(frame, coverGuestName);
+                    window.patchCoverGuestV52(frame, coverGuestName);
                 });
             }
 
